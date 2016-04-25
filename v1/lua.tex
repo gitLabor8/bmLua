@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{geometry}
+ \geometry{left = 3cm, right = 3cm, top=3cm, foot = 3cm, head = 2cm}
+\usepackage[utf8]{inputenc}
+
+\title{Models of Calculation Project \\
+         The Language Lua}
+\author{Serena Rietbergen, Frank Gerlings, Lars Jellema}
+\date{April 2016}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+We are going to dicuss Coroutines.%Zorg dat je een korte inleiding schrijft waarin je zo concreet mogelijk uitlegt wat je gaat doen.
+\subsection{Why is Lua so special?}
+%Beschrijf hierbij ook wat er zo bijzonder is aan het gekozen onderwerp ten opzichte van de standaardtaal While.
+\subsection{Example code}
+\begin{verbatim}
+    \lstinputlisting{code.lua}
+\end{verbatim}
+%  Neem in de inleiding ook alvast een voorbeeldprogramma op waarin iets interessants gebeurt. Zo'n programma helpt om duidelijk te krijgen hoe programma's in jullie taal er uitzien.
+
+\section{Description of the syntax}
+% Dat kan natuurlijk al een complete grammatica zijn, maar op dit moment is het voldoende om hier te beschrijven welke constructies uitgewerkt gaan worden. In het bijzonder geef je hier aan of je de hele taal gaat beschrijven of slechts een deel er van.
+\subsection{Expected Problems}
+% Verwacht je nu al problemen bij de beschrijving van de syntax, benoem die hier dan al.
+
+\section{Description of the semantics}
+% Natuurlijk hoef je hier nog geen complete lijst met semantiekregels te geven, maar je moet al wel een idee hebben hoe je denkt te gaan werken.
+\subsection{Approach}
+Axiomatisch. Makkelijker voor stelling te bewijzen, ipv een stuk code te simuleren
+%Ga je voor ns, sos of nog heel iets anders? En waarom?
+\subsection{Concepts}
+% Probeer ook vast iets te zeggen over de concepten die je nodig hebt:
+Core: tables\\
+Expansion: coroutines, yielding and resuming, pipes and filters  
+\subsubsection{States}
+%wat zijn je toestanden (als je toestanden gebruikt),
+\subsubsection{Transitions}
+% wat zijn je transities,
+\subsubsection{Types}
+% welke types spelen een rol, etcetera.
+\subsection{ Expected Problems Problems}
+% Verwacht je nu al problemen bij de beschrijving van de semantiek, benoem die hier dan al.
+
+\section{Analysis}
+\subsection{Example Code}
+\subsection{Elaboration}
+%Heb je bijvoorbeeld al een mooi stuk voorbeeldcode waarvan je uiteindelijk wil laten zien dat het precies doet wat in je semantiekregels hebt vastgelegd, geef dat voorbeeld dan reeds expliciet aan. Dit mag natuurlijk het voorbeeld uit de inleiding zijn, maar het hoeft niet.
+
+\newpage
+\appendix
+\section{Planning}
+% the \\ insures the section title is centered below the phrase: AppendixA
+
+
+
+\end{document}
