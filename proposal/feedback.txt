@@ -1,0 +1,17 @@
+Op zich is Lua wel geschikt voor het werkstuk denken we.
+
+Jullie hebben het over 'de basistaal'. Wat zit daar zoal in? En in het
+bijzonder, leg in de volgende versie uit aan de hand van voorbeelden dat
+deze taal echt wat toevoegt aan While qua semantiek.
+En zorg dat voorbeelden van duidelijke uitleg zijn voorzien.
+
+Verder zijn jullie met zijn drieen, wat betekent dat we meestal iets meer
+breedte of juist iets meer diepgang verwachten. Zorg dus dat het deel wat
+jullie uiteindelijk gaan beschrijven niet te simpel wordt.
+
+In het bijzonder hebben jullie het over 'introspection capabilities'. Zorg dat
+duidelijk wordt wat jullie daar precies mee bedoelen. Hebben jullie een 
+ander 'berekeningsmodel' nodig dan bij While om dat te kunnen beschrijven?
+
+Jullie begeleider wordt: Tim.
+
