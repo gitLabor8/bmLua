@@ -2,6 +2,8 @@
 \usepackage{geometry}
  \geometry{left = 3cm, right = 3cm, top=3cm, foot = 3cm, head = 2cm}
 \usepackage[utf8]{inputenc}
+\usepackage{syntax}
+\usepackage{listings}
 
 \title{Models of Calculation Project \\
          The Language Lua}
@@ -17,17 +19,77 @@
 \newpage
 
 \section{Introduction}
-We are going to dicuss Coroutines.%Zorg dat je een korte inleiding schrijft waarin je zo concreet mogelijk uitlegt wat je gaat doen.
-\subsection{Why is Lua so special?}
-%Beschrijf hierbij ook wat er zo bijzonder is aan het gekozen onderwerp ten opzichte van de standaardtaal While.
+
+In this article, we're going to define axiomatic semantics for concurrency in
+Lua. We're going to start by defining the basics of Lua, including some basic
+data types which we'll use in our examples. Then follows a description of
+coroutines, which is the built-in concurrency tool of Lua. Coroutines in Lua are
+collaborative, which means a coroutine must explicitly yield its cpu to other
+coroutines. Only one coroutine ever runs at any time, which means coroutines do
+not offer parallelism. They still offer a useful abstraction though. As While
+doesn't offer any kind of concurrency, we believe Lua is sufficiently special.
+
+% TODO: Explain why coroutines are a useful abstraction
+
 \subsection{Example code}
-\begin{verbatim}
-    \lstinputlisting{code.lua}
-\end{verbatim}
+
+\lstinputlisting{example.lua}
+
 %  Neem in de inleiding ook alvast een voorbeeldprogramma op waarin iets interessants gebeurt. Zo'n programma helpt om duidelijk te krijgen hoe programma's in jullie taal er uitzien.
 
 \section{Description of the syntax}
 % Dat kan natuurlijk al een complete grammatica zijn, maar op dit moment is het voldoende om hier te beschrijven welke constructies uitgewerkt gaan worden. In het bijzonder geef je hier aan of je de hele taal gaat beschrijven of slechts een deel er van.
+
+The following section describes the grammar of the subset of Lua that we'll be
+describing. Numerous Lua constructs have been left out for the sake of
+simplicity, like multiple assignment for example. Whitespace has also been left
+out of the grammar, as have the optional semicolons.
+
+\newpage
+
+\begin{grammar}
+
+	<block> ::= <stmt> <block> | `break' | `'
+
+	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <nil>
+
+	<nil> ::= `nil'
+
+	<bool> ::= `true' | `false'
+
+	<stmt> ::= <do> | <if> | <while> | <repeat> | <num-for> | <iter-for> |
+	<assign> | <return>
+
+	<assign> ::= <var> `=' <expr>
+
+	<return> ::= `return' <expr>
+
+	<do> ::= `do' <block> `end'
+
+	<if> ::= `if' <expr> `then' <block> <else-ifs> <else> `end'
+
+	<else-ifs> ::= `elseif' <expr> `then' <block> <else-ifs> | `'
+
+	<else> ::= `else' <block> | `'
+
+	<while> ::= `while' <expr> `do' <block> `end'
+
+	<repeat> ::= `repeat' <block> `until' <expr>
+
+	<num-for> ::= `for' <var> `=' <expr> `,' <expr> <num-for-step> `do' <block>
+	`end'
+
+	<num-for-step> ::= `,' <expr> | `'
+
+	<iter-for> ::= `for' <var> `,' <var> `in' <expr> `do' <block> `end'
+
+\end{grammar}
+
+This grammar is still incomplete.
+
+% TODO: Fill in <var>, <expr>, <bool>, <number>, <string>, <func-def>, <call>,
+% <table>, <co-create>, <co-wrap>, <co-resume>, <co-yield>
+
 \subsection{Expected Problems}
 % Verwacht je nu al problemen bij de beschrijving van de syntax, benoem die hier dan al.
 
@@ -46,7 +108,7 @@ Expansion: coroutines, yielding and resuming, pipes and filters
 % wat zijn je transities,
 \subsubsection{Types}
 % welke types spelen een rol, etcetera.
-\subsection{ Expected Problems Problems}
+\subsection{Expected Problems}
 % Verwacht je nu al problemen bij de beschrijving van de semantiek, benoem die hier dan al.
 
 \section{Analysis}
