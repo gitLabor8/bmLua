@@ -1,0 +1,655 @@
+\documentclass[10pt]{article}
+\usepackage[text={15cm,21.0cm},centering]{geometry}
+\usepackage{hyperref}
+\usepackage{prooftree}
+\usepackage{alltt}
+\usepackage{stmaryrd}
+\usepackage{multicol}
+\usepackage{varwidth}
+\usepackage{color}
+\usepackage{afterpage}
+\usepackage[figuresleft]{rotating}
+\input{sl1defs}
+
+\newcommand{\pass}[2]{\left[#1\mapsto\calA{#2}\right]}
+\newcommand{\smaller}[1]{{\small\textcolor{red}{#1}}}
+\renewcommand{\allttsup}[1]{\begin{math}^{\textcolor{red}{#1}}\end{math}}
+%\renewcommand{\allttsub}[1]{\begin{math}_{\textcolor{red}{#1}}\end{math}}
+\renewcommand{\psqan}[5]{\{#1\}^{\textcolor{red}{#4}}\espace #2 \espace \{#3\}^{\textcolor{red}{#5}}}
+
+\title{Annotated Programs}
+
+\author{Engelbert Hubbers}
+
+\begin{document}
+\maketitle
+\section*{Introduction}
+In chapter 6 of their book \cite{nie}, Nielson and Nielson introduce
+the system of axiomatic program verification.
+The rules for this system are given as axioms and derivation rules in
+Table~6.1 on page~178.
+In particular this means that proofs in this system are always given as
+derivation trees.
+Unfortunately these trees can get very wide and the general proof is
+a bit hard to follow: you basically start with a precondition at the
+bottom of the tree, work through all smaller trees in a depth first scenario
+to finally end with the desired post-condition again at the bottom of the tree.
+In order to improve the readability of the proofs, we introduce a
+different notation that allows us to write the correctness proofs in a
+short and comprehensible way.
+
+\section{Intuitive annotations}
+The idea is that we write the main precondition above the first line of code,
+all intermediate predicates between the code, and the final post-condition below
+the last line of code.
+Let's give an example.
+
+Consider the program $\swhile{\mtrue}{\sskip}$.
+We would like to prove here\footnote{Note that in \cite{nie} a different assertion is proved: $\psq{\mtrue}{\swhile{\mtrue}{\sskip}}{\mtrue}$. Convince yourself that both assertions are indeed correct.} that the assertion
+\[\psq{\mtrue}{\swhile{\mtrue}{\sskip}}{\mfalse}\]
+holds
+Figure~\ref{fig:treestyle} shows the proof in terms of trees as 
+defined in \cite{nie}.
+\begin{figure}[htb]
+$$
+\begin{prooftree}
+\[
+  \[
+    \[
+      \axjustifies
+      \psqan{\mtrue}{\sskip}{\mtrue}{4}{5}
+      \using{\rassp}
+    \]
+    \justifies
+    \psqan{\mtrue \land \mtrue}{\sskip}{\mtrue}{3}{6}
+    \using{\rconsp}
+  \]
+  \justifies
+  \psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\neg\mtrue \land \mtrue}{2}{7}
+  \using{\rwhilep}
+\]
+\justifies
+\psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\mfalse}{1}{8}
+\using{\rconsp}
+\end{prooftree}
+$$
+\caption{Proof in normal tree style}
+\label{fig:treestyle}
+\end{figure}
+Note that the numbers attached to the predicates are officially
+not part of this
+tree style and therefore they are displayed in a
+different color.
+They are here only to match a specific predicate in this tree
+to a specific predicate in the annotated program style.
+
+Figure~\ref{fig:annostyle} shows two versions of the proof in our annotated
+program style.
+
+\begin{figure}[htb]
+\begin{center}
+\begin{multicols}{2}
+\begin{varwidth}{3cm}
+\begin{alltt}
+\{\mtrue\}\allttsup{1}
+\{\mtrue\}\allttsup{2}
+\mwhile \mtrue
+\mdo
+  \{\mtrue \allttmath{\land} \mtrue\}\allttsup{3}
+  \{\mtrue\}\allttsup{4}
+  \mmskip
+  \{\mtrue\}\allttsup{5}
+  \{\mtrue\}\allttsup{6}
+\{\allttmath{\neg}\mtrue \allttmath{\land} \mtrue\}\allttsup{7}
+\{\mfalse\}\allttsup{8}
+\end{alltt}
+\end{varwidth}
+\newpage
+\begin{varwidth}{3cm}
+\begin{alltt}
+\{\mtrue\}\allttsup{1}
+\mwhile \mtrue
+\mdo
+  \{\mtrue \allttmath{\land} \mtrue\}\allttsup{3}
+  \{\mtrue\}\allttsup{4}
+  \mmskip
+  \{\mtrue\}\allttsup{5}
+\{\allttmath{\neg}\mtrue \allttmath{\land} \mtrue\}\allttsup{7}
+\{\mfalse\}\allttsup{8}
+\end{alltt}
+\end{varwidth}
+\end{multicols}
+\end{center}
+\caption{Proofs in annotated program style}
+\label{fig:annostyle}
+\end{figure}
+
+But how should we read this?
+Let's have a look at the proof on the left.
+From top to bottom, each time we encounter another predicate, it should
+follow from the one directly above.
+If there are no statements between these predicates, the lower
+predicate should be directly implied by the one above as is for instance the
+case for predicates 7 and 8.
+And if there are statements between the predicates
+as is the case with predicates 4 and 5, it means that
+the one above the statement
+acts as a precondition to this statement, and the one below
+acts as a post-condition to it.
+As a consequence, the numbering of the predicates is now in a normal
+order. At the first line the initial precondition is written and at the last
+line the desired post-condition is written.
+
+Note that this numbering is not part of the official style.
+As stated before, it is only used to indicate which predicate in the program
+corresponds to which predicate in the tree.
+In particular, the numbers help us to recognize the rules being used.
+Predicates 1, 2, 7 and 8 correspond with the lower $\rconsp$ rule in the tree.
+Predicates 2, 3, 6 and 7 correspond with the $\rwhilep$ rule.
+Predicates 3, 4, 5 and 6 correspond with the upper $\rconsp$ rule.
+Predicates 4 and 5 correspond with the $\rskipp$ axiom.
+
+Now if we take a look at the proof on the right, we see that the predicates 2 
+and 6 have disappeared.
+This is because they are exactly the same as the predicates 1 and 5 directly
+above them.
+In general a $\rconsp$ rule deals with four predicates.
+However, in case we are only weakening the postcondition, but keep the same
+precondition like we did in the lower $\rconsp$ rule, we do not copy the
+precondition, but simply write it down once. And likewise if we are only
+weakening the precondition as we did with the upper $\rconsp$ rule.
+The result is the proof on the right.
+
+\section{Formalization}
+Now that we have explained the idea behind the notation, we can introduce
+it formally by giving the translation for all axioms and rules.
+See Table~\ref{tab:transform} for the details.
+%\afterpage{clearpage}
+\begin{table}[p]
+\caption{Transformation between tree style presentation and annotated program style}
+\label{tab:transform}
+\[
+\begin{array}{|l|l|l|}
+\hline
+\mbox{Rule} & \mbox{Tree style} & \mbox{Program style}\\ \hline 
+\rassp
+&
+\psq{P\pass{x}{a}}{\sass{x}{a}}{P}
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P\pass{x}{a}}\}
+\sass{x}{a}
+\{\allttmath{P}\}
+
+\end{alltt}
+\end{minipage}
+\\
+\hline
+\rskipp
+&
+\psq{P}{\sskip}{P}
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\mmskip
+\{\allttmath{P}\}
+
+\end{alltt}
+\end{minipage}
+\\
+\hline
+\rcompp
+&
+$$
+\begin{prooftree}
+\psq{P}{S_1}{Q}
+\quad
+\psq{Q}{S_2}{R}
+\justifies
+\psq{P}{\scomp{S_1}{S_2}}{R}
+\end{prooftree}
+$$
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\allttmath{S}\allttsub{1}
+\{\allttmath{Q}\}
+\allttmath{S}\allttsub{2}
+\{\allttmath{R}\}
+
+\end{alltt}
+\end{minipage}
+\\
+\hline
+\rifp
+&
+\begin{prooftree}
+\psq{\calB{b} \land P}{S_1}{Q}
+\quad
+\psq{\neg\calB{b} \land P}{S_2}{Q}
+\justifies
+\psq{P}{\sifthenelse{b}{S_1}{S_2}}{Q}
+\end{prooftree}
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\mif \allttmath{b}
+\mthen
+  \{\allttmath{\calB{b} \land P}\}
+  \allttmath{S}\allttsub{1}
+  \{\allttmath{Q}\}
+\melse
+  \{\allttmath{\neg\calB{b} \land P}\}
+  \allttmath{S}\allttsub{2}
+  \{\allttmath{Q}\}
+\{\allttmath{Q}\}
+
+\end{alltt}
+\end{minipage}
+\\ 
+\hline
+\rwhilep
+&
+\begin{prooftree}
+\psq{\calB{b} \land P}{S}{P}
+\justifies
+\psq{P}{\swhile{b}{S}}{\neg\calB{b} \land P}
+\end{prooftree}
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\mwhile \allttmath{b}
+\mdo
+  \{\allttmath{\calB{b} \land P}\}
+  \allttmath{S}
+  \{\allttmath{P}\}
+\{\allttmath{\neg\calB{b} \land P}\}
+
+\end{alltt}
+\end{minipage}
+\\ 
+\hline
+\rconsp
+&
+\begin{prooftree}
+\psq{P'}{S}{Q'}
+\justifies
+\psq{P}{S}{Q}
+\end{prooftree}
+\quad
+\mbox{if }P\Rightarrow P' \mbox{ and } Q' \Rightarrow Q
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\{\allttmath{P'}\}
+\allttmath{S}
+\{\allttmath{Q'}\}
+\{\allttmath{Q}\}
+
+\end{alltt}
+\end{minipage}
+\\
+\hline
+\end{array}
+\]
+\end{table}
+
+
+In addition to this table we have to make two remarks.
+\begin{enumerate}
+\item
+As we have seen before the general $\rconsp$ rule deals with four predicates,
+but in case 
+$P=P'$ or $Q=Q'$, the predicate will be listed only once.
+\item
+Since there is no $\rcompp$ rule for a composition of three or more
+statements,
+the derivation tree style automatically treats
+$\scomp{S_1}{\scomp{S_2}{S_3}}$
+as a nested composition of 
+$\scomp{S_1}{(\scomp{S_2}{S_3})}$ or
+$\scomp{(\scomp{S_1}{S_2})}{S_3}$.
+Table~\ref{tab:nestedcomp} shows how we deal with this nesting in the 
+annotated program style.
+As you can see, again we opt for eliminating duplicates as much as possible.
+\begin{table}[t]
+\caption{Nested compositions}
+\label{tab:nestedcomp}
+\[
+\begin{array}{|l|l|}\hline
+\mbox{Tree style} & \mbox{Program style} \\
+\hline
+$$
+\begin{prooftree}
+\psq{P}{S_1}{Q}
+\quad
+\[
+  \psq{Q}{S_2}{R}
+  \quad
+  \psq{R}{S_3}{T}
+  \justifies
+  \psq{Q}{\scomp{S_2}{S_3}}{T}
+  \using{\rcompp}
+\]
+\justifies
+\psq{P}{\scomp{S_1}{\scomp{S_2}{S_3}}}{T}
+\using{\rcompp}
+\end{prooftree}
+$$
+&
+\begin{minipage}{1in}
+\begin{alltt}
+
+\{\allttmath{P}\}
+\allttmath{S}\allttsub{1}
+\{\allttmath{Q}\}
+\allttmath{S}\allttsub{2}
+\{\allttmath{R}\}
+\allttmath{S}\allttsub{3}
+\{\allttmath{T}\}
+
+\end{alltt}
+\end{minipage}
+\\
+\hline
+\end{array}
+\]
+\end{table}
+\end{enumerate}
+
+\section{Example}
+Figure~\ref{fig:euclid} shows a 
+program which is known as Euclid's algorithm.
+\begin{figure}[hb]
+\begin{center}
+\begin{varwidth}{3cm}
+\begin{alltt}
+x:=m;
+y:=n;
+while x{\mneq}y
+do
+  if x>y
+  then
+    x:=x-y;
+  else
+    y:=y-x;
+g:=x;
+\end{alltt}
+\end{varwidth}
+\end{center}
+\caption{Euclid's algorithm}
+\label{fig:euclid}
+\end{figure}
+We want to prove that this algorithm computes the greatest common divisor
+of the values $m$ and $n$.
+Or in other words, we want to prove 
+\begin{equation}
+\label{eqn:euclidgoal}
+\psq{m>0 \land n>0}{S}{g=\gcd(m,n)}
+\end{equation}
+where $S$ is the whole program.
+In order to prove this we may assume that
+\begin{equation}
+\label{eqn:euclidhint}
+u>v>0 \mbox{ implies } \gcd(u,v)=\gcd(u-v,v)
+\end{equation}
+
+\newcommand{\sasseen}{\sass{x}{m}}
+\newcommand{\sasstwee}{\sass{y}{n}}
+\newcommand{\sassdrie}{\sass{x}{x-y}}
+\newcommand{\sassvier}{\sass{y}{y-x}}
+\newcommand{\sassvijf}{\sass{g}{x}}
+\newcommand{\sifcond}{x>y}
+\newcommand{\sifeen}{\sifthenelse{\sifcond}{\sassdrie}{\sassvier}}
+\newcommand{\swhilecond}{x\neq y}
+\newcommand{\swhilestat}{\sifeen}
+\newcommand{\swhileeen}{\swhile{\swhilecond}{(\swhilestat)}}
+\newcommand{\scompeen}{\scomp{\sasseen}{\scomptwee}}
+\newcommand{\scomptwee}{\scomp{\sasstwee}{\scompdrie}}
+\newcommand{\scompdrie}{\scomp{\swhileeen}{\sassvijf}}
+\newcommand{\peena}{m>0}
+\newcommand{\peenb}{n>0}
+%\newcommand{\peen}{m>0 \land n>0}
+\newcommand{\peen}{\peena \land \peenb}
+\newcommand{\ptweea}{\gcd(m,n)=\gcd(m,n)}
+%\newcommand{\ptwee}{m>0 \land n>0 \land m>0 \land n>0 \land \gcd(m,n)=\gcd(m,n)}
+\newcommand{\ptwee}{\peen \land \peena \land \peenb \land \ptweea}
+\newcommand{\pdriea}{x>0}
+\newcommand{\pdrieb}{\gcd(x,n)=\gcd(m,n)}
+%\newcommand{\pdrie}{m>0 \land n>0 \land x>0 \land n>0 \land \gcd(x,n)=\gcd(m,n)}
+\newcommand{\pdrie}{\peen \land \pdriea \land \peenb \land \pdrieb}
+\newcommand{\pviera}{y>0}
+\newcommand{\pvierb}{\gcd(x,y)=\gcd(m,n)}
+%\newcommand{\pvier}{m>0 \land n>0 \land x>0 \land y>0 \land \gcd(x,y)=\gcd(m,n)}
+\newcommand{\pvier}{\peen \land \pdriea \land \pviera \land \pvierb}
+\newcommand{\pvijfa}{x\neq y}
+\newcommand{\pvijf}{\pvijfa \land \pvier}
+\newcommand{\pzesa}{x>y}
+\newcommand{\pzes}{\pzesa \land \pvijf}
+\newcommand{\pzevena}{x-y>0}
+\newcommand{\pzevenb}{\gcd(x-y,y)=\gcd(m,n)}
+%\newcommand{\pzeven}{m>0 \land n>0 \land x-y>0 \land y>0 \land \gcd(x-y,y)=\gcd(m,n)}
+\newcommand{\pzeven}{\peen \land \pzevena \land \pviera \land \pzevenb}
+\newcommand{\pacht}{\neg(\pzesa) \land \pvijf}
+\newcommand{\pnegena}{y>x}
+%\newcommand{\pnegen}{y>x \land m>0 \land n>0 \land x>0 \land y>0 \land \gcd(x,y)=\gcd(m,n)}
+\newcommand{\pnegen}{\pnegena \land \pvier}
+\newcommand{\ptiena}{y-x>0}
+\newcommand{\ptienb}{\gcd(x,y-x)=\gcd(m,n)}
+%\newcommand{\ptien}{m>0 \land n>0 \land x>0 \land y-x>0 \land \gcd(x,y-x)=\gcd(m,n)}
+\newcommand{\ptien}{\peen \land \pdriea \land \ptiena \land \ptienb}
+\newcommand{\pelf}{\neg(\pvijfa) \land \pvier}
+\newcommand{\ptwaalfa}{x=y}
+%\newcommand{\ptwaalf}{x=y \land m>0 \land n>0 \land x>0 \land y>0 \land \gcd(x,y)=\gcd(m,n)}
+\newcommand{\ptwaalf}{\ptwaalfa \land \pvier}
+\newcommand{\pdertiena}{x=\gcd(m,n)}
+%\newcommand{\pdertien}{m>0 \land n>0 \land x=\gcd(m,n)}
+\newcommand{\pdertien}{\peen \land \pdertiena}
+\newcommand{\pveertiena}{g=\gcd(m,n)}
+%\newcommand{\pveertien}{m>0 \land n>0 \land g=\gcd(m,n)}
+\newcommand{\pveertien}{\peen \land \pveertiena}
+\newcommand{\pvijftien}{\pveertiena}
+\newcommand{\speen}{P_{1}}
+\newcommand{\sptwee}{P_{2}}
+\newcommand{\spdrie}{P_{3}}
+\newcommand{\spvier}{P_{4}}
+\newcommand{\spvijf}{P_{5}}
+\newcommand{\spzes}{P_{6}}
+\newcommand{\spzeven}{P_{7}}
+\newcommand{\spacht}{P_{8}}
+\newcommand{\spnegen}{P_{9}}
+\newcommand{\sptien}{P_{10}}
+\newcommand{\spelf}{P_{11}}
+\newcommand{\sptwaalf}{P_{12}}
+\newcommand{\spdertien}{P_{13}}
+\newcommand{\spveertien}{P_{14}}
+\newcommand{\spvijftien}{P_{15}}
+Figure~\ref{fig:euclidtree} gives a proof in tree style.
+It automatically shows the problem with this type of proofs:
+even if we abbreviate all predicates, it is still difficult to print
+the whole tree on one sheet of A4-paper!
+\begin{sidewaysfigure}
+\vspace*{3cm}
+{\small
+$$
+\hspace*{-2cm}
+\begin{prooftree}
+\[
+  \[
+    \axjustifies
+    \psq{\sptwee}{\sasseen}{\spdrie}
+    \using{\rassp}
+  \]
+  \quad
+  \[
+    \[
+      \axjustifies
+      \psq{\spdrie}{\sasstwee}{\spvier}
+      \using{\rassp}
+    \]
+    \quad
+    \[
+      \[
+        \[
+          \[
+            \[
+              \[
+                \[
+                  \axjustifies
+                  \psq{\spzeven}{\sassdrie}{\spvier}
+                  \using{\rassp}
+                \]
+                \justifies
+                \psq{\spzes}{\sassdrie}{\spvier}
+                \using{\rconsp}
+              \]
+              \quad
+              \[
+                \[
+                  \[
+                    \axjustifies
+                    \psq{\sptien}
+{\sassvier}{\spvier}
+                    \using{\rassp}
+                  \]
+                  \justifies
+                  \psq{\spnegen}{\sassvier}{\spvier}
+                  \using{\rconsp}
+                \]
+                \justifies
+                \psq{\spacht}{\sassvier}{\spvier}
+                \using{\rconsp}
+              \]
+              \justifies
+              \psq{\spvijf}{\sifeen}{\spvier}
+              \using{\rifp}
+            \]
+            \justifies
+            \psq{\spvier}{\swhileeen}{\spelf}
+            \using{\rwhilep}
+          \]
+          \justifies
+          \psq{\spvier}{\swhileeen}{\sptwaalf}
+          \using{\rconsp}
+        \]
+        \justifies
+        \psq{\spvier}{\swhileeen}{\spdertien}
+        \using{\rconsp}
+      \]
+      \quad
+      \[
+        \axjustifies
+        \psq {\spdertien} {\sassvijf}{\spveertien}
+        \using{\rassp}
+      \]
+      \justifies
+      \psq{\spvier}{\scompdrie}{\spveertien}
+      \using{\rcompp}
+    \]
+    \justifies
+    \psq{\spdrie}{\scomptwee}{\spveertien}
+    \using{\rcompp}
+  \]
+  \justifies
+  \psq{\sptwee}{\scompeen}{\spveertien}
+  \using{\rcompp}
+\]
+\justifies
+\psq{\speen}{\scompeen}{\spvijftien}
+\using{\rconsp}
+\end{prooftree}
+$$
+}
+\caption{Euclid's algorithm proved by a tree}
+\label{fig:euclidtree}
+\end{sidewaysfigure}
+Before we will go into the details of the proof itself,
+we present the same proof in annotated program style
+in Figure~\ref{fig:euclidprog}.
+The first thing that strikes is that the representation
+of this proof is short enough to allow us to include some extra information:
+\begin{itemize}
+\item
+Line numbers that we can use later on to explain the individual steps in the 
+proof
+\item
+The abbreviations used in Figure~\ref{fig:euclidtree}.
+\end{itemize}
+As before, we use a different color for this extra information, which is not
+officially part of the style.
+\begin{figure}[htb]
+\begin{center}
+\begin{varwidth}{15cm}
+\begin{alltt}
+\smaller{ 01.} \allttmath{\{\peen\}} \smaller{ \allttmath{= \{\speen\}}}
+\smaller{ 02.} \allttmath{\{\ptwee\}} \smaller{ \allttmath{= \{\sptwee\}}}
+\smaller{    } x:=m;
+\smaller{ 03.} \allttmath{\{\pdrie\}} \smaller{ \allttmath{= \{\spdrie\}}}
+\smaller{    } y:=n;
+\smaller{ 04.} \allttmath{\{\pvier\}} \smaller{ \allttmath{= \{\spvier\}}}
+\smaller{    } while x\mneq{}y
+\smaller{    } do
+\smaller{ 05.}   \allttmath{\{\pvijf\}} \smaller{ \allttmath{= \{\spvijf\}}}
+\smaller{    }   if x>y
+\smaller{    }   then
+\smaller{ 06.}     \allttmath{\{\pzes\}} \smaller{ \allttmath{= \{\spzes\}}}
+\smaller{ 07.}     \allttmath{\{\pzeven\}} \smaller{ \allttmath{= \{\spzeven\}}}
+\smaller{    }     x:=x-y;
+\smaller{ 08.}     \allttmath{\{\pvier\}} \smaller{ \allttmath{= \{\spvier\}}}
+\smaller{    }   else
+\smaller{ 09.}     \allttmath{\{\pacht\}} \smaller{ \allttmath{= \{\spacht\}}}
+\smaller{ 10.}     \allttmath{\{\pnegen\}} \smaller{ \allttmath{= \{\spnegen\}}}
+\smaller{ 11.}     \allttmath{\{\ptien\}} \smaller{ \allttmath{= \{\sptien\}}}
+\smaller{    }     y:=y-x;
+\smaller{ 12.}     \allttmath{\{\pvier\}} \smaller{ \allttmath{= \{\spvier\}}}
+\smaller{ 13.}   \allttmath{\{\pvier\}} \smaller{ \allttmath{= \{\spvier\}}}
+\smaller{ 14.} \allttmath{\{\pelf\}} \smaller{ \allttmath{= \{\spelf\}}}
+\smaller{ 15.} \allttmath{\{\ptwaalf\}} \smaller{ \allttmath{= \{\sptwaalf\}}}
+\smaller{ 16.} \allttmath{\{\pdertien\}} \smaller{ \allttmath{= \{\spdertien\}}}
+\smaller{    } g:=x;
+\smaller{ 17.} \allttmath{\{\pveertien\}} \smaller{ \allttmath{= \{\spveertien\}}}
+\smaller{ 18.} \allttmath{\{\pvijftien\}} \smaller{ \allttmath{= \{\spvijftien\}}}
+\end{alltt}
+\end{varwidth}
+\caption{Euclid's algorithm proved by an annotated program}
+\label{fig:euclidprog}
+\end{center}
+\end{figure}
+
+We complete this example by explaining all the steps in the proof
+of Figure~\ref{fig:euclidprog}, which implicitly also explains
+all the steps in the proof of Figure~\ref{fig:euclidtree}.
+\begin{enumerate}
+\item \verb+01-->02+: [cons$_p$], elementary mathematics (EM).
+\item \verb+02-->03+: [ass$_p$], $\sptwee = \spdrie\pass{x}{m}$.
+\item \verb+03-->04+: [ass$_p$], $\spdrie = \spvier\pass{y}{n}$.
+\item \verb+04-->14+: [while$_p$], based upon \verb+04+, \verb+05+, \verb+13+ and \verb+14+. Note that $\spvier$ is the loop invariant, $\spvijf = x\neq y \land \spvier$ and $\spelf = \neg(x\neq y) \land \spvier$.
+\item \verb+05-->13+: [if$_p$], based upon \verb+05+, \verb+06+, \verb+08+, \verb+09+, \verb+12+ and \verb+13+.
+Note that $\spzes = \left.x>y\right. \land \spvijf$, 
+and $\spacht = \neg(x>y) \land \spvijf$. 
+\item \verb+06-->07+: [cons$_p$], based upon (\ref{eqn:euclidhint}).
+\item \verb+07-->08+: [ass$_p$], $\spzeven = \spvier\pass{x}{x-y}$.
+\item \verb+09-->10+: [cons$_p$], EM.
+\item \verb+10-->11+: [cons$_p$], based upon (\ref{eqn:euclidhint}).
+\item \verb+11-->12+: [ass$_p$], $\sptien = \spvier\pass{y}{y-x}$.
+\item \verb+14-->15+: [cons$_p$], EM.
+\item \verb+15-->16+: [cons$_p$], $x=y \wedge x>0 \wedge y>0$ implies $\mgcd(x,y)=x$.
+\item \verb+16-->17+: [ass$_p$], $\spdertien = \spveertien\pass{g}{x}$.
+\item \verb+17-->18+: [cons$_p$], EM.
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{sc}
+\end{document}
