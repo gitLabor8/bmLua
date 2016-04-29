@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{syntax}
+\usepackage{listings}
+\usepackage{prooftree}
+ \geometry{left = 3cm, right = 3cm, top=3cm, foot = 3cm, head = 2cm}
+\usepackage[utf8]{inputenc}
+
+\title{Models of Calculation Project \\
+         The Language Lua}
+\author{Serena Rietbergen, Frank Gerlings, Lars Jellema}
+\date{April 2016}
+
+\begin{document}
+
+\maketitle
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[scale=0.45]{lua}
+\end{figure}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+In this article, we're going to define axiomatic semantics for concurrency in
+Lua. We're going to start by defining the basics of Lua, including some basic
+data types which we'll use in our examples. Then follows a description of
+coroutines, which is the built-in concurrency tool of Lua. Coroutines in Lua are
+collaborative, which means a coroutine must explicitly yield its cpu to other
+coroutines. Only one coroutine ever runs at any time, which means coroutines do
+not offer parallelism. They still offer a useful abstraction though. As While
+doesn't offer any kind of concurrency, we believe Lua is sufficiently special.
+
+% TODO: Explain why coroutines are a useful abstraction
+\subsection{Example code}
+\lstinputlisting{code.lua}
+%  Neem in de inleiding ook alvast een voorbeeldprogramma op waarin iets interessants gebeurt. Zo'n programma helpt om duidelijk te krijgen hoe programma's in jullie taal er uitzien.
+
+\section{Description of the syntax}
+% Dat kan natuurlijk al een complete grammatica zijn, maar op dit moment is het voldoende om hier te beschrijven welke constructies uitgewerkt gaan worden. In het bijzonder geef je hier aan of je de hele taal gaat beschrijven of slechts een deel er van.
+
+The following section describes the grammar of the subset of Lua that we'll be
+describing. Numerous Lua constructs have been left out for the sake of
+simplicity, like multiple assignment for example. Whitespace has also been left
+out of the grammar, as have the optional semicolons.
+
+\newpage
+
+\begin{grammar}
+	<block> ::= <stmt> <block> | `break' | `'
+	
+	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <nil>
+	
+	<nil> ::= `nil'
+	
+	<bool> ::= `true' | `false'
+	
+	<stmt> ::= <do> | <if> | <while> | <repeat> | <num-for> | <iter-for> | <assign> | <return>
+	
+	<assign> ::= <var> `=' <expr>
+	
+	<return> ::= `return' <expr>
+	
+	<do> ::= `do' <block> `end'
+	
+	<if> ::= `if' <expr> `then' <block> <else-ifs> <else> `end'
+	
+	<else-ifs> ::= `elseif' <expr> `then' <block> <else-ifs> | `'
+	
+	<else> ::= `else' <block> | `'
+	
+	<while> ::= `while' <expr> `do' <block> `end'
+	
+	<repeat> ::= `repeat' <block> `until' <expr>
+	
+	<num-for> ::= `for' <var> `=' <expr> `,' <expr> <num-for-step> `do' <block> `end'
+	
+	<num-for-step> ::= `,' <expr> | `'
+	
+	<iter-for> ::= `for' <var> `,' <var> `in' <expr> `do' <block> `end'
+\end{grammar}
+
+This grammar is still incomplete.
+
+% TODO: Fill in <var>, <expr>, <bool>, <number>, <string>, <func-def>, <call>,
+% <table>, <co-create>, <co-wrap>, <co-resume>, <co-yield>
+
+\subsection{Expected Problems}
+% Verwacht je nu al problemen bij de beschrijving van de syntax, benoem die hier dan al.
+
+\section{Description of the semantics}
+% Natuurlijk hoef je hier nog geen complete lijst met semantiekregels te geven, maar je moet al wel een idee hebben hoe je denkt te gaan werken.
+\subsection{Approach}
+For this project we have chosen to apply axiomatic semantics. This is because this allows us to properly prove a theorem, instead of just simulating a piece of a program.
+%Ga je voor ns, sos of nog heel iets anders? En waarom?
+\subsection{Concepts}
+We will mainly be explaining tables. We will expand this with coroutines, yielding and resuming, pipes and filters. (also functions need to be described)
+% Probeer ook vast iets te zeggen over de concepten die je nodig hebt:  
+\subsubsection{States}
+%wat zijn je toestanden (als je toestanden gebruikt),
+We are going to use Axiomatic Semantics and therefore we do not have states. We use pre- and postconditions instead.
+\subsubsection{Transitions}
+% wat zijn je transities,
+Our transitions are of the form:\\
+${P}S{Q}$\\
+\subsubsection{Types}
+Lua does not have a strong type system. Whenever a value is called the value is passed and the user doesn't need to apply which type this value has. In this model we will restrict ourselves to Coroutines, Tables, Booleans, Strings and Integers as types.
+% welke types spelen een rol, etcetera.
+\subsection{Expected Problems}
+We expect some problems with describing how values are passed on. For example, if we want to call to print an Integer, Lua provides us with the toString value for that Integer. We need to figure out a good method for describing how Lua does this.
+% Verwacht je nu al problemen bij de beschrijving van de semantiek, benoem die hier dan al.
+
+\section{Analysis}
+bewijzen dat wat er geprint wordt ook hetgene is wat geprint moet worden. 
+\subsection{Example Code}
+\lstinputlisting{code.lua}
+\subsection{Elaboration}
+
+\newpage
+\appendix
+\section{Planning}
+\begin{tabular}{|c|c|}
+\hline
+ Deadline   &  Summary \\
+ \hline
+    29 April & Submit first version project \\
+    ? & Apply feedback \\
+   2 May & Finish Syntax\\
+   9 May & Finish Semantics\\
+   16 May & Choose final program for analysis\\
+      23 May & Finish Introduction\\
+    27 Mei & Submit second version project \\
+    ? & Apply feedback \\
+    13 June & Finish Analysis\\
+    17 June & Submit final version project \\
+    \hline
+\end{tabular}
+% the \\ insures the section title is centered below the phrase: AppendixA
+
+
+
+\end{document}
