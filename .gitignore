@@ -21,6 +21,8 @@ logs
 # *.ps
 # *.eps
 *.pdf
+## Include final versions
+!frank_lars_serena_Lua.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
