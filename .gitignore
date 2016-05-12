@@ -23,6 +23,7 @@ logs
 *.pdf
 ## Include final versions
 !frank_lars_serena_Lua.pdf
+!feedback_v1.pdf
 
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
