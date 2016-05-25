@@ -70,22 +70,25 @@ out of the grammar, as have the optional semicolons.
 \newpage
 
 \begin{grammar}
-	<block> ::= <stmt> <block> | `break' | `'
+	<block> ::= <stmt> <block> | `' % | `break' | `continue' | `return' <expr>
 	
-	<expr> ::= <bool> | <number> | <string> | <table> | <func>  | <nil> | <table>  | <co-wrap> | <co-yield> | <call>
+	<expr> ::= <bool> | <number> | <string> | <table> | <func>  | <nil> | <table> | <co-wrap>
 		| <lambda> 
 	
 	<nil> ::= `nil'
 	
 	<bool> ::= `true' | `false'
 	
-	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | <table-access> 
+	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | % <table-access> |
+		<co-yield> | <co-resume> | <call>
 	
 	<assign> ::= <var> `=' <expr>
 	
 	<return> ::= `return' <expr>
 	
 	<if> ::= `if' <expr> `then' <block> <else-ifs> <else> `end'
+
+	% <do> ::= `do' <block> `end'
 	
 	<else-ifs> ::= `elseif' <expr> `then' <block> <else-ifs> | `'
 	
@@ -93,15 +96,17 @@ out of the grammar, as have the optional semicolons.
 	
 	<while> ::= `while' <expr> `do' <block> `end'
 	
-	<table-access> ::= <var> `['<expr> `]=' <expr>
+	% <table-access> ::= <var> `['<expr> `]=' <expr>
 	
-	<table> ::= `{' `}' | ...
+	% <table> ::= `{' `}' | ...
 
 	<co-wrap> ::= `coroutine.wrap(' <func> `)'
 
-	<co-yield> ::= `coroutine.yield(' <expr> `)'
+	<co-yield> ::= <var> `=' `coroutine.yield(' <expr> `)'
 
-	<call> ::= <func> `(' <expr> `)'
+	<co-resume> ::= <var> `=' <coroutine> `(' <expr> `)'
+
+	<call> ::= <var> `=' <func> `(' <expr> `)'
 
 	<lambda> ::= `function (' <var> `)' <block> `end'
 \end{grammar}
