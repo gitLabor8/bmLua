@@ -72,19 +72,14 @@ out of the grammar, as have the optional semicolons.
 \begin{grammar}
 	<block> ::= <stmt> <block> | `break' | `'
 	
-<<<<<<< HEAD
-	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <thread> | <nil> | <table-access>
-=======
-	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <nil> | <call>
-		| <lambda>
->>>>>>> 1eb2ef2d0f97e76e4b87ed7ea359890d51a08d4c
+	<expr> ::= <bool> | <number> | <string> | <table> | <func>  | <nil> | <table>  | <co-wrap> | <co-yield> | <call>
+		| <lambda> 
 	
 	<nil> ::= `nil'
 	
 	<bool> ::= `true' | `false'
 	
-	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | <co-wrap>
-		| <co-yield>
+	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | <table-access> 
 	
 	<assign> ::= <var> `=' <expr>
 	
