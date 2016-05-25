@@ -52,19 +52,19 @@ out of the grammar, as have the optional semicolons.
 \begin{grammar}
 	<block> ::= <stmt> <block> | `break' | `'
 	
-	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <nil>
+	<expr> ::= <bool> | <number> | <string> | <table> | <func> | <nil> | <call>
+		| <lambda>
 	
 	<nil> ::= `nil'
 	
 	<bool> ::= `true' | `false'
 	
-	<stmt> ::= <do> | <if> | <while> | <repeat> | <num-for> | <iter-for> | <assign> | <return>
+	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | <co-wrap>
+		| <co-yield>
 	
 	<assign> ::= <var> `=' <expr>
 	
 	<return> ::= `return' <expr>
-	
-	<do> ::= `do' <block> `end'
 	
 	<if> ::= `if' <expr> `then' <block> <else-ifs> <else> `end'
 	
@@ -73,14 +73,14 @@ out of the grammar, as have the optional semicolons.
 	<else> ::= `else' <block> | `'
 	
 	<while> ::= `while' <expr> `do' <block> `end'
-	
-	<repeat> ::= `repeat' <block> `until' <expr>
-	
-	<num-for> ::= `for' <var> `=' <expr> `,' <expr> <num-for-step> `do' <block> `end'
-	
-	<num-for-step> ::= `,' <expr> | `'
-	
-	<iter-for> ::= `for' <var> `,' <var> `in' <expr> `do' <block> `end'
+
+	<co-wrap> ::= `coroutine.wrap(' <func> `)'
+
+	<co-yield> ::= `coroutine.yield(' <expr> `)'
+
+	<call> ::= <func> `(' <expr> `)'
+
+	<lambda> ::= `function (' <var> `)' <block> `end'
 \end{grammar}
 
 This grammar is still incomplete.
