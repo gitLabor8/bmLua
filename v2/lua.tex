@@ -4,6 +4,7 @@
 \usepackage{syntax}
 \usepackage{listings}
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{prooftree}
 \usepackage{tipa}
 \usepackage{upgreek}
@@ -22,7 +23,6 @@
 \newcommand{\pass}[2]{\left[#1\mapsto\calA{#2}\right]}
 \newcommand{\smaller}[1]{{\small\textcolor{red}{#1}}}
 \renewcommand{\allttsup}[1]{\begin{math}^{\textcolor{red}{#1}}\end{math}}
-%\renewcommand{\allttsub}[1]{\begin{math}_{\textcolor{red}{#1}}\end{math}}
 \renewcommand{\psqan}[5]{\{#1\}^{\textcolor{red}{#4}}\espace #2 \espace \{#3\}^{\textcolor{red}{#5}}}
 
 \title{Models of Calculation Project \\
@@ -151,31 +151,57 @@ $$
 \end{figure}
 
 \subsection{Approach}
-For this project we have chosen to apply axiomatic semantics. This is because this allows us to properly prove a theorem, instead of just simulating a piece of a program.
+For this project we have chosen to apply Structural Operational Semantics. This is because with SOS we can easily add extra information to the states. %TODO
 %Ga je voor ns, sos of nog heel iets anders? En waarom?
 \subsection{Concepts}
-We will mainly be explaining tables. We will expand this with coroutines, yielding and resuming, pipes and filters. (also functions need to be described)
+We will mainly be explaining coroutines, if possible we will expand this with tables, yielding and resuming, pipes and filters. To explain this we will also need to describe functions.
 % Probeer ook vast iets te zeggen over de concepten die je nodig hebt:  
 \subsubsection{States}
 %wat zijn je toestanden (als je toestanden gebruikt),
-We are going to use Axiomatic Semantics and therefore we do not have states. We use pre- and postconditions instead.
+Because we are going to use SOS we will look at very small steps concerning the states of the program. %moar  
 \subsubsection{Transitions}
 % wat zijn je transities,
-Our transitions are of the form:\\
-$\{P\}S\{Q\}$\\
+There are two types of transitions. We have the form where a statement and a state go to a state: $\pss{S}{s}{s'}$. Secondly we have the form $\psq{S}{s}{S'}{s'}$. This is from a statement and state to a (new) statements and a (new) state. 
 \subsubsection{Types}
 Lua does not have a strong type system. Whenever a value is called the value is passed and the user doesn't need to apply which type this value has. In this model we will restrict ourselves to Coroutines, Tables, Booleans, Strings and Integers as types.\\
-\begin{tabular}{lcl}
-Boolean &::=& \textbf{true} $|$ \textbf{false}\\
-Integer &::=& 0 $|$ 1 $|$ 2 $|$ ...\\
-String &::=& $<$Char,String$>| \lambda$ \\
-Char &::=& a $|$ ... $|$ z $|$ A $|$ ... $|$ Z \\
-Table &::=& Value $\to$ Value\\ % <- Serena
-Value &::=& Boolean $|$ Integer $ |$ String $|$ Char $|$ Table $|$ Coroutine \\
-Coroutine &::=& [to be continued] \\ % Lars' approved
-\end{tabular}\\
+\begin{array}{lcl}
+\text{Boolean} &::=& \textbf{tt} | \textbf{ff}\\
+\text{Integer} &::=& 0 | 1 | 2 | ...\\
+\text{String} &::=& <Char,String>| \lambda \\
+\text{Char} &::=& a|...|z|A|...|Z \\
+\text{Table} &::=& \text{Value} \to \text{Value}\\ % <- Serena
+\text{Value} &::=& \text{Boolean} | \text{Integer} | \text{String} | \text{Char} | \text{Table} | \text{Coroutine} \\
+\text{Coroutine} &::=& [to be continued] \\ % Lars' approved
+\end{array}\\
 
 % welke types spelen een rol, etcetera.
+
+\subsection{Rules}
+\begin{array}{llr}
+\rass & \psq{\sass{x}{a}}{s}{\pass{x}{a}}{s} & \\
+ & & & \\
+\rskip & \pss{\sskip}{s}{s} & \\
+ & & & \\
+\rcomp & 
+$$
+\begin{prooftree}
+\psq{S_1}{s}{S'_1}{s'}
+\justifies
+\psq{S_1;S_2}{s}{S'_1;S_2}{s'}
+\end{prooftree}
+$$ & \\
+ & & & \\
+\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} & $\mathcal{B}$\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
+ & & & \\
+\rifff & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_2}{s}
+& $\mathcal{B}$\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
+ & & & \\
+\rwhile &
+\psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s} & \\
+\end{tabular}
+
+
+
 \subsection{Expected Problems}
 We expect some problems with describing how values are passed on. For example, if we want to call to print an Integer, Lua provides us with the toString value for that Integer. We need to figure out a good method for describing how Lua does this. 
 % Verwacht je nu al problemen bij de beschrijving van de semantiek, benoem die hier dan al.
@@ -187,14 +213,13 @@ We will prove that what is printed is actually the thing that needs to be printe
 \subsection{Elaboration}
 To be added. % Serenapproved
 \newpage
+\section*{Appendix}
 \appendix
 \section{Planning}
 \begin{tabular}{|c|c|}
 \hline
  Deadline   &  Summary \\
  \hline
-    29 April & Submit first version project \\
-    ? & Apply feedback \\
    2 May & Finish Syntax\\
    9 May & Finish Semantics\\
    16 May & Choose final program for analysis\\
