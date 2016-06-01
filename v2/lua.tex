@@ -171,48 +171,50 @@ $$ \\
 \rwhile &
 \psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s}\\
  & \\
- &
+\text{[resume]} &
  $$
  \begin{prooftree}
-\psqstar{\text{B_I}}{ \text{let(merge(env}_I, \text{env}_O)\text{r}_I,\mathds{E}\llbracket \text{a}_O \rrbracket \text{env}_O)}{\text{r}'_I=\text{coroutine.yield(a}_I)\text{B}'_I}{\text{env}'_I} 
+\psqstar{\text{B}_I}{ \text{let(merge(env}_I, \text{env}_O)\text{r}_I,\mathds{E}\llbracket \text{a}_O \rrbracket \text{env}_O)}{\text{r}'_I=\text{coroutine.yield(a}_I)\text{B}'_I}{\text{env}'_I} 
 \justifies
 \psq{\text{r}_O=\text{c(a}_O\text{)B}_O}{\text{env}_O}{\text{B}_O }{\text{let(set(merge(env}_O,\text{env}'_I), \text{c}, (\text{env}'_I, \text{r}'_I, \text{B}'_I)), \text{r}_O, \mathds{E} \llbracket \text{a}_I \rrbracket \text{env}'_I))}
 \end{prooftree}
 $$ \\
  & \text{where env}_I, \text{r}_I, \text{B}_I $=$ \text{get(env}_O,\text{c)}\\
+ & \\
+\text{[wrap]} & \pss{\text{c=coroutine.wrap(f)}}{\text{env}}{\text{set(env,c,(env}_f\text{,v}_f\text{,B}_f\text{))}}\\
+& \text{where env}_f\text{, v}_f\text{,B}_f = \mathds{E}\llbracket \text{f} \rrbracket \text{env}.\\
 \end{array}
 $
 
 \subsection{Environment}
 $
 \begin{array}{rl}
-Env = & (\langle var \rangle \to Val \cup Ref, Ref \to Val, Ref) \\
-get((L,G,N), v) =   & \begin{cases} G(L(v)) & if L(v)\in Ref \\
-                    L(v) & else \\ \end{cases}\\
-merge((L,\_,N_1),(\_,G,N_2) = & (L,G, max(N_1,N_2)) \\
-let((L,G,N),v, x) =& \Big(\Big( v'\mapsto 
+\text{Env} = & (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref}) \\
+\text{get((L,G,ref}_N\text{), v)} =   & \begin{cases} \text{G(L(v))} & \text{ if } L(v)\in \text{Ref} \\
+                    \text{L(v)} & \text{ else } \\ \end{cases}\\
+\text{merge((L,\_,}\text{ref}_{N_1}\text{),(\_,G,}\text{ref}_{N_2}\text{)} = & \text{(L,G,max(ref}_{N_1},\text{ref}_{N_2})) \\
+\text{let((L,G,ref}_N\text{),v, x)} =& \Big(\Big( v'\mapsto 
 \begin{cases}
-x & \text{ if } v=v'\\
-L(v') & \text{ else} \\
-\end{cases}\Big), G, N\Big)\\
-set((L,G,N), v, c) =& \Big(L,\Big(r \mapsto 
+\text{x} & \text{ if } v=v'\\
+\text{L(v')} & \text{ else} \\
+\end{cases}\Big), \text{G,ref}_N\Big)\\
+\text{set((L,G,ref}_N\text{), v, c)} =& \Big(L,\Big(r \mapsto 
 \begin{cases}
-x & if L(v) = r \\
-G(r) & else \\
-\end{cases}\Big),N\Big)\\
-def((L,G,N),v,x) = & \Big(\Big(v' \mapsto 
+\text{x} & \text{ if } \text{L(v)} = \text{r} \\
+\text{G(r)} & \text{ else } \\
+\end{cases}\Big),\text{ref}_N\Big)\\
+\text{def((L,G,ref}_N\text{),v,x)} = & \Big(\Big(v' \mapsto 
 \begin{cases}
-N & if v'=v \\
-L(v') & else \\
-\end{cases} \Big),\Big( r\mapsto
+\text{ref}_N & \text{ if } \text{v'=v} \\
+\text{L(v')} & \text{ else} \\
+\end{cases} \Big),\Big( \text{r}\mapsto
 \begin{cases}
-x & if r=N\\
-G(r) & else \\
-\end{cases}\Big), N+1\Big) \\
- & \text{In the above, replace N with ref}_N\\
- Ref = & \{ref_n | n\in \mathbb{N}\} \\
- new = & ( x\mapsto nil, x\mapsto nil, ref_O) \\
- Nil = & \{nil\} \\
+\text{x} & \text{ if } \text{r}=\text{ref}_N\\
+\text{G(r)} & \text{ else} \\
+\end{cases}\Big), \text{ref}_{N+1}\Big) \\
+\text{Ref} = & \{\text{ref}_n | n\in \mathbb{N}\} \\
+\text{new} = & ( x\mapsto \text{nil}, x\mapsto \text{nil}, \text{ref}_O) \\
+\text{Nil} = & \{\text{nil}\} \\
 \end{array}
 $
 
