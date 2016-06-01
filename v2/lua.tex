@@ -131,19 +131,19 @@ $$
     \[
       \axjustifies
       \psqan{\mtrue}{\sskip}{\mtrue}{4}{5}
-      \using{\rassp}
+      \using{\rass}
     \]
     \justifies
     \psqan{\mtrue \land \mtrue}{\sskip}{\mtrue}{3}{6}
-    \using{\rconsp}
+    \using{\rcons}
   \]
   \justifies
   \psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\neg\mtrue \land \mtrue}{2}{7}
-  \using{\rwhilep}
+  \using{\rwhile}
 \]
 \justifies
 \psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\mfalse}{1}{8}
-\using{\rconsp}
+\using{\rcons}
 \end{prooftree}
 $$
 \caption{Proof in normal tree style}
@@ -164,6 +164,7 @@ Because we are going to use SOS we will look at very small steps concerning the 
 There are two types of transitions. We have the form where a statement and a state go to a state: $\pss{S}{s}{s'}$. Secondly we have the form $\psq{S}{s}{S'}{s'}$. This is from a statement and state to a (new) statements and a (new) state. 
 \subsubsection{Types}
 Lua does not have a strong type system. Whenever a value is called the value is passed and the user doesn't need to apply which type this value has. In this model we will restrict ourselves to Coroutines, Tables, Booleans, Strings and Integers as types.\\
+$
 \begin{array}{lcl}
 \text{Boolean} &::=& \textbf{tt} | \textbf{ff}\\
 \text{Integer} &::=& 0 | 1 | 2 | ...\\
@@ -173,15 +174,16 @@ Lua does not have a strong type system. Whenever a value is called the value is 
 \text{Value} &::=& \text{Boolean} | \text{Integer} | \text{String} | \text{Char} | \text{Table} | \text{Coroutine} \\
 \text{Coroutine} &::=& [to be continued] \\ % Lars' approved
 \end{array}\\
-
+$
 % welke types spelen een rol, etcetera.
 
 \subsection{Rules}
+$
 \begin{array}{rlr}
 \rass & \psq{\sass{x}{a}}{s}{\pass{x}{a}}{s} & \\
- & & & \\
+ & & \\
 \rskip & \pss{\sskip}{s}{s} & \\
- & & & \\
+ & & \\
 \rcomp & 
 $$
 \begin{prooftree}
@@ -190,16 +192,16 @@ $$
 \psq{S_1;S_2}{s}{S'_1;S_2}{s'}
 \end{prooftree}
 $$ & \\
- & & & \\
-\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} & $\mathcal{B}$\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
- & & & \\
+ & & \\
+\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} & \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
+ & & \\
 \rifff & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_2}{s}
-& $\mathcal{B}$\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
- & & & \\
+& \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
+ & & \\
 \rwhile &
 \psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s} & \\
 \end{array}
-
+$
 
 
 \subsection{Expected Problems}
