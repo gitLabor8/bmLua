@@ -21,7 +21,9 @@
 \newcommand{\punten}[1]{\marginpar{\fbox{#1}}}
 \newcommand{\QQ}{{\mathbb Q}}
 \newcommand{\RR}{{\mathbb R}}
-\newcommand{\psq}[3]{\{#1\}\espace #2 \espace \{#3\}}
+\newcommand{\psq}[4]{\langle#1,#2\rangle \Longrightarrow \langle#3,#4\rangle}
+\newcommand{\pss}[3]{\langle#1,#2\rangle \Longrightarrow #3}
+
 \newcommand{\psqsr}[5]{\{#1\}\espace #2 \espace \{#3\} \espace #4 \espace \{#5\}}
 \newcommand{\psqsrst}[7]{\{#1\}\espace #2 \espace \{#3\} \espace #4 \espace \{#5\} \espace #6 \espace \{#7\}}
 \newcommand{\psqan}[5]{\{#1\}^{#4}\espace #2 \espace \{#3\}^{#5}}
@@ -41,7 +43,7 @@
 \newcommand{\swhileuntil}[3]{\mbox{\texttt{while~}}#1\mbox{\texttt{~do~}}#2\mbox{\texttt{~until~}}#3}
 \newcommand{\trans}[3]{\langle #1, #2\rangle \impl #3}
 \newcommand{\ZZ}{{\mathbb Z}}
-\newenvironment{sol}{\expandafter\ifsols\par{\bf{Oplossing:}\\}}{\par\expandafter\fi}
+\newenvironment{sol}{\expandafter\ifsols\par{\bf{Solution:}\\}}{\par\expandafter\fi}
 \newcommand{\mtt}{\mbox{tt}}
 \newcommand{\mff}{\mbox{ff}}
 \newcommand{\mwhile}{\mbox{while}}
@@ -52,26 +54,23 @@
 \newcommand{\mmskip}{\mbox{skip}}
 \newcommand{\mtrue}{\mbox{true}}
 \newcommand{\mfalse}{\mbox{false}}
-\newcommand{\rskipp}{[\mbox{skip}_{\mbox{p}}]}
-\newcommand{\rassp}{[\mbox{ass}_{\mbox{p}}]}
-\newcommand{\rcompp}{[\mbox{comp}_{\mbox{p}}]}
-\newcommand{\rifp}{[\mbox{if}_{\mbox{p}}]}
-\newcommand{\rwhilep}{[\mbox{while}_{\mbox{p}}]}
-\newcommand{\rconsp}{[\mbox{cons}_{\mbox{p}}]}
-\newcommand{\rvar}{[\mbox{var}_{\mbox{ns}}]}
-\newcommand{\rnone}{[\mbox{none}_{\mbox{ns}}]}
-\newcommand{\rass}{[\mbox{ass}_{\mbox{ns}}]}
-\newcommand{\rskip}{[\mbox{skip}_{\mbox{ns}}]}
-\newcommand{\rcomp}{[\mbox{comp}_{\mbox{ns}}]}
-\newcommand{\riftt}{[\mbox{if}_{\mbox{ns}}^{\mbox{tt}}]}
-\newcommand{\rifff}{[\mbox{if}_{\mbox{ns}}^{\mbox{ff}}]}
-\newcommand{\rwhilett}{[\mbox{while}_{\mbox{ns}}^{\mbox{tt}}]}
-\newcommand{\rwhileff}{[\mbox{while}_{\mbox{ns}}^{\mbox{ff}}]}
-\newcommand{\rwhileuntilttff}{[\mbox{while-until}_{\mbox{ns}}^{\mbox{ttff}}]}
-\newcommand{\rwhileuntiltttt}{[\mbox{while-until}_{\mbox{ns}}^{\mbox{tttt}}]}
-\newcommand{\rwhileuntilff}{[\mbox{while-until}_{\mbox{ns}}^{\mbox{ff}}]}
-\newcommand{\rcall}{[\mbox{call}_{\mbox{ns}}]}
-\newcommand{\rcallrec}{[\mbox{call}_{\mbox{ns}}^{\mbox{rec}}]}
+\newcommand{\rskip}{[\mbox{skip}]}
+\newcommand{\rass}{[\mbox{ass}]}
+\newcommand{\rcomp}{[\mbox{comp}]}
+\newcommand{\rif}{[\mbox{if}]}
+\newcommand{\rwhile}{[\mbox{while}]}
+\newcommand{\rcons}{[\mbox{cons}]}
+\newcommand{\rvar}{[\mbox{var}]}
+\newcommand{\rnone}{[\mbox{none}]}
+\newcommand{\riftt}{[\mbox{if}^{\mbox{tt}}]}
+\newcommand{\rifff}{[\mbox{if}^{\mbox{ff}}]}
+\newcommand{\rwhilett}{[\mbox{while}^{\mbox{tt}}]}
+\newcommand{\rwhileff}{[\mbox{while}^{\mbox{ff}}]}
+\newcommand{\rwhileuntilttff}{[\mbox{while-until}^{\mbox{ttff}}]}
+\newcommand{\rwhileuntiltttt}{[\mbox{while-until}^{\mbox{tttt}}]}
+\newcommand{\rwhileuntilff}{[\mbox{while-until}^{\mbox{ff}}]}
+\newcommand{\rcall}{[\mbox{call}]}
+\newcommand{\rcallrec}{[\mbox{call}^{\mbox{rec}}]}
 \newcommand{\strans}[4]{{#1} \vdash \langle {#2}, {#3} \rangle \rightarrow {#4}}
 \newcommand{\dtrans}[3]{\langle {#1}, {#2} \rangle \rightarrow_{D} {#3}}
 
