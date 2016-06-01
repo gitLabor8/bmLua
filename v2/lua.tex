@@ -8,7 +8,8 @@
 \usepackage{prooftree}
 \usepackage{tipa}
 \usepackage{upgreek}
- \geometry{left = 3cm, right = 3cm, top=3cm, foot = 3cm, head = 2cm}
+\usepackage{ dsfont }
+ \geometry{left = 2cm, right = 2cm, top=2cm, foot = 2cm, head = 2cm}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{alltt}
@@ -20,15 +21,10 @@
 \usepackage[figuresleft]{rotating}
 \input{sl1defs}
 
-\newcommand{\pass}[2]{\left[#1\mapsto\calA{#2}\right]}
-\newcommand{\smaller}[1]{{\small\textcolor{red}{#1}}}
-\renewcommand{\allttsup}[1]{\begin{math}^{\textcolor{red}{#1}}\end{math}}
-\renewcommand{\psqan}[5]{\{#1\}^{\textcolor{red}{#4}}\espace #2 \espace \{#3\}^{\textcolor{red}{#5}}}
-
 \title{Models of Calculation Project \\
          The Language Lua}
 \author{Serena Rietbergen, Frank Gerlings, Lars Jellema}
-\date{April 2016}
+\date{June 2016}
 
 \begin{document}
 
@@ -123,33 +119,6 @@ This grammar is still incomplete.
 % Natuurlijk hoef je hier nog geen complete lijst met semantiekregels te geven, maar je moet al wel een idee hebben hoe je denkt te gaan werken.
 The normal rules will be worked out in the nearby future, as seen in appendix A. We will, however, start some of the harder semantical expressions, namely the thread and the table rules.\\
 
-\begin{figure}[htb]
-$$
-\begin{prooftree}
-\[
-  \[
-    \[
-      \axjustifies
-      \psqan{\mtrue}{\sskip}{\mtrue}{4}{5}
-      \using{\rass}
-    \]
-    \justifies
-    \psqan{\mtrue \land \mtrue}{\sskip}{\mtrue}{3}{6}
-    \using{\rcons}
-  \]
-  \justifies
-  \psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\neg\mtrue \land \mtrue}{2}{7}
-  \using{\rwhile}
-\]
-\justifies
-\psqan{\mtrue}{\swhile{\mtrue}{\sskip}}{\mfalse}{1}{8}
-\using{\rcons}
-\end{prooftree}
-$$
-\caption{Proof in normal tree style}
-\label{fig:treestyle}
-\end{figure}
-
 \subsection{Approach}
 For this project we have chosen to apply Structural Operational Semantics. This is because with SOS we can easily add extra information to the states. %TODO
 %Ga je voor ns, sos of nog heel iets anders? En waarom?
@@ -179,11 +148,11 @@ $
 
 \subsection{Rules}
 $
-\begin{array}{rlr}
-\rass & \psq{\sass{x}{a}}{s}{\pass{x}{a}}{s} & \\
- & & \\
-\rskip & \pss{\sskip}{s}{s} & \\
- & & \\
+\begin{array}{rl}
+\rass & \psq{\sass{x}{a}}{s}{\pass{x}{a}}{s}\\
+ & \\
+\rskip & \pss{\sskip}{s}{s} \\
+ & \\
 \rcomp & 
 $$
 \begin{prooftree}
@@ -191,18 +160,61 @@ $$
 \justifies
 \psq{S_1;S_2}{s}{S'_1;S_2}{s'}
 \end{prooftree}
-$$ & \\
- & & \\
-\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} & \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
- & & \\
-\rifff & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_2}{s}
-& \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
- & & \\
+$$ \\
+ & \\
+\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} \\
+ & \text{where } \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
+  & \\
+\rifff & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_2}{s}\\
+ & \text{where } \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
+  & \\
 \rwhile &
-\psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s} & \\
+\psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s}\\
+ & \\
+ &
+ $$
+ \begin{prooftree}
+\psqstar{\text{B_I}}{ \text{let(merge(env}_I, \text{env}_O)\text{r}_I,\mathds{E}\llbracket \text{a}_O \rrbracket \text{env}_O)}{\text{r}'_I=\text{coroutine.yield(a}_I)\text{B}'_I}{\text{env}'_I} 
+\justifies
+\psq{\text{r}_O=\text{c(a}_O\text{)B}_O}{\text{env}_O}{\text{B}_O }{\text{let(set(merge(env}_O,\text{env}'_I), \text{c}, (\text{env}'_I, \text{r}'_I, \text{B}'_I)), \text{r}_O, \mathds{E} \llbracket \text{a}_I \rrbracket \text{env}'_I))}
+\end{prooftree}
+$$ \\
+ & \text{where env}_I, \text{r}_I, \text{B}_I $=$ \text{get(env}_O,\text{c)}\\
 \end{array}
 $
 
+\subsection{Environment}
+$
+\begin{array}{rl}
+Env = & (\langle var \rangle \to Val \cup Ref, Ref \to Val, Ref) \\
+get((L,G,N), v) =   & \begin{cases} G(L(v)) & if L(v)\in Ref \\
+                    L(v) & else \\ \end{cases}\\
+merge((L,\_,N_1),(\_,G,N_2) = & (L,G, max(N_1,N_2)) \\
+let((L,G,N),v, x) =& \Big(\Big( v'\mapsto 
+\begin{cases}
+x & \text{ if } v=v'\\
+L(v') & \text{ else} \\
+\end{cases}\Big), G, N\Big)\\
+set((L,G,N), v, c) =& \Big(L,\Big(r \mapsto 
+\begin{cases}
+x & if L(v) = r \\
+G(r) & else \\
+\end{cases}\Big),N\Big)\\
+def((L,G,N),v,x) = & \Big(\Big(v' \mapsto 
+\begin{cases}
+N & if v'=v \\
+L(v') & else \\
+\end{cases} \Big),\Big( r\mapsto
+\begin{cases}
+x & if r=N\\
+G(r) & else \\
+\end{cases}\Big), N+1\Big) \\
+ & \text{In the above, replace N with ref}_N\\
+ Ref = & \{ref_n | n\in \mathbb{N}\} \\
+ new = & ( x\mapsto nil, x\mapsto nil, ref_O) \\
+ Nil = & \{nil\} \\
+\end{array}
+$
 
 \subsection{Expected Problems}
 We expect some problems with describing how values are passed on. For example, if we want to call to print an Integer, Lua provides us with the toString value for that Integer. We need to figure out a good method for describing how Lua does this. 
@@ -218,15 +230,10 @@ To be added. % Serenapproved
 \section*{Appendix}
 \appendix
 \section{Planning}
-\begin{tabular}{|c|c|}
+\begin{tabular}{|r|l|}
 \hline
  Deadline   &  Summary \\
  \hline
-   2 May & Finish Syntax\\
-   9 May & Finish Semantics\\
-   16 May & Choose final program for analysis\\
-      23 May & Finish Introduction\\
-    27 Mei & Submit second version project \\
     ? & Apply feedback \\
     13 June & Finish Analysis\\
     17 June & Submit final version project \\
