@@ -1,0 +1,83 @@
+\newcommand{\calA}[1]{{\cal A}\llbracket #1 \rrbracket}
+\newcommand{\calB}[1]{{\cal B}\llbracket #1 \rrbracket}
+\newcommand{\CC}{{\mathbb C}}
+\newcommand{\desda}{\leftrightarrow}
+\newcommand{\Desda}{\Leftrightarrow}
+\newcommand{\dimpl}{\Rightarrow}
+\newcommand{\espace}{\hspace*{0.2cm}}
+\newcommand{\impl}{\rightarrow}
+\newcommand{\mgeq}{\begin{math}\geq\end{math}}
+\newcommand{\mggd}{\mbox{ggd}}
+\newcommand{\mgcd}{\mbox{gcd}}
+\newcommand{\minv}{\mbox{INV}}
+\newcommand{\mneg}{\begin{math}\neg\end{math}}
+\newcommand{\mneq}{\begin{math}\neq\end{math}}
+\newcommand{\mwedge}{\begin{math}\wedge\end{math}}
+\newcommand{\NN}{{\mathbb N}}
+\newcommand{\postboven}{}
+\newcommand{\postonder}{}
+\newcommand{\preboven}{}
+\newcommand{\preonder}{}
+\newcommand{\punten}[1]{\marginpar{\fbox{#1}}}
+\newcommand{\QQ}{{\mathbb Q}}
+\newcommand{\RR}{{\mathbb R}}
+
+\newcommand{\pass}[2]{\left[#1\mapsto\calA{#2}\right]}
+\newcommand{\psq}[4]{\langle#1,#2\rangle \Longrightarrow \langle#3,#4\rangle}
+\newcommand{\pss}[3]{\langle#1,#2\rangle \Longrightarrow #3}
+\newcommand{\psqstar}[4]{\langle#1,#2\rangle \Longrightarrow^* \langle#3,#4\rangle}
+
+
+
+\newcommand{\psqsr}[5]{\{#1\}\espace #2 \espace \{#3\} \espace #4 \espace \{#5\}}
+\newcommand{\psqsrst}[7]{\{#1\}\espace #2 \espace \{#3\} \espace #4 \espace \{#5\} \espace #6 \espace \{#7\}}
+\newcommand{\psqan}[5]{\{#1\}^{#4}\espace #2 \espace \{#3\}^{#5}}
+\newcommand{\allttmath}[1]{\begin{math}#1\end{math}}
+\newcommand{\allttsup}[1]{\begin{math}^{#1}\end{math}}
+\newcommand{\allttsub}[1]{\begin{math}_{#1}\end{math}}
+
+\newcommand{\sblock}[2]{\mbox{\texttt{begin~}}#1\espace#2\mbox{\texttt{~end}}}
+\newcommand{\svar}[2]{\mbox{\texttt{var~}}#1:=#2;}
+\newcommand{\sass}[2]{#1:=#2}
+\newcommand{\scomp}[2]{#1;#2}
+\newcommand{\sifthenelse}[3]{\mbox{\texttt{if~}}#1\mbox{\texttt{~then~}}#2\mbox{\texttt{~else~}}#3}
+\newcommand{\sor}[2]{#1\mbox{\texttt{~or~}}#2}
+\newcommand{\srepeatuntil}[2]{\mbox{\texttt{repeat~}}#1\mbox{\texttt{~until~}}#2}
+\newcommand{\sskip}{\mbox{\texttt{skip}}}
+\newcommand{\swhile}[2]{\mbox{\texttt{while~}}#1\mbox{\texttt{~do~}}#2}
+\newcommand{\swhileuntil}[3]{\mbox{\texttt{while~}}#1\mbox{\texttt{~do~}}#2\mbox{\texttt{~until~}}#3}
+\newcommand{\trans}[3]{\langle #1, #2\rangle \impl #3}
+\newcommand{\ZZ}{{\mathbb Z}}
+\newenvironment{sol}{\expandafter\ifsols\par{\bf{Solution:}\\}}{\par\expandafter\fi}
+\newcommand{\mtt}{\mbox{tt}}
+\newcommand{\mff}{\mbox{ff}}
+\newcommand{\mwhile}{\mbox{while}}
+\newcommand{\mif}{\mbox{if}}
+\newcommand{\mthen}{\mbox{then}}
+\newcommand{\melse}{\mbox{else}}
+\newcommand{\mdo}{\mbox{do}}
+\newcommand{\mmskip}{\mbox{skip}}
+\newcommand{\mtrue}{\mbox{true}}
+\newcommand{\mfalse}{\mbox{false}}
+\newcommand{\rskip}{[\mbox{skip}]}
+\newcommand{\rass}{[\mbox{ass}]}
+\newcommand{\rcomp}{[\mbox{comp}]}
+\newcommand{\rif}{[\mbox{if}]}
+\newcommand{\rwhile}{[\mbox{while}]}
+\newcommand{\rcons}{[\mbox{cons}]}
+\newcommand{\rvar}{[\mbox{var}]}
+\newcommand{\rnone}{[\mbox{none}]}
+\newcommand{\riftt}{[\mbox{if}_{\mbox{tt}}]}
+\newcommand{\rifff}{[\mbox{if}_{\mbox{ff}}]}
+\newcommand{\rwhilett}{[\mbox{while}_{\mbox{tt}}]}
+\newcommand{\rwhileff}{[\mbox{while}_{\mbox{ff}}]}
+\newcommand{\rwhileuntilttff}{[\mbox{while-until}^{\mbox{ttff}}]}
+\newcommand{\rwhileuntiltttt}{[\mbox{while-until}^{\mbox{tttt}}]}
+\newcommand{\rwhileuntilff}{[\mbox{while-until}^{\mbox{ff}}]}
+\newcommand{\rcall}{[\mbox{call}]}
+\newcommand{\rcallrec}{[\mbox{call}^{\mbox{rec}}]}
+\newcommand{\strans}[4]{{#1} \vdash \langle {#2}, {#3} \rangle \rightarrow {#4}}
+\newcommand{\dtrans}[3]{\langle {#1}, {#2} \rangle \rightarrow_{D} {#3}}
+
+\newcommand{\axjustifies}{\thickness0em\justifies}
+\endinput

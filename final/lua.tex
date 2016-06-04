@@ -1,0 +1,250 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{syntax}
+\usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{prooftree}
+\usepackage{tipa}
+\usepackage{upgreek}
+\usepackage{ dsfont }
+ \geometry{left = 2cm, right = 2cm, top=2cm, foot = 2cm, head = 2cm}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{alltt}
+\usepackage{stmaryrd}
+\usepackage{multicol}
+\usepackage{varwidth}
+\usepackage{color}
+\usepackage{afterpage}
+\usepackage[figuresleft]{rotating}
+\input{sl1defs}
+
+\title{Models of Calculation Project \\
+         The Language Lua}
+\author{Serena Rietbergen, Frank Gerlings, Lars Jellema}
+\date{June 2016}
+
+\begin{document}
+
+\maketitle
+\begin{figure}[!ht]
+  \centering
+    \includegraphics[scale=0.45]{lua}
+\end{figure}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+In this article, we're going to define axiomatic semantics for coroutines in
+Lua. We're going to start by defining the basics of Lua, including some basic
+data types which we'll use in our examples. Then follows a description of
+coroutines, which is the built-in concurrency tool of Lua. Coroutines in Lua are
+collaborative, which means a coroutine must explicitly yield its cpu to other
+coroutines. Only one coroutine ever runs at any time, which means coroutines do
+not offer parallelism. They still offer a useful abstraction though. As While
+doesn't offer any kind of concurrency, we believe Lua is sufficiently special.
+
+% TODO: Explain why coroutines are a useful abstraction
+\subsection{Example code}
+%  Neem in de inleiding ook alvast een voorbeeldprogramma op waarin iets interessants gebeurt. Zo'n programma helpt om duidelijk te krijgen hoe programma's in jullie taal er uitzien.
+% TODO: aanpassen zodat het in onze grammar past (multiple assignement er uit halen)
+% TODO: Korte uitleg van wat het programma nu effectief doet
+\lstinputlisting{code.lua}
+
+\section{Description of the syntax}
+% Dat kan natuurlijk al een complete grammatica zijn, maar op dit moment is het voldoende om hier te beschrijven welke constructies uitgewerkt gaan worden. In het bijzonder geef je hier aan of je de hele taal gaat beschrijven of slechts een deel er van.
+
+The following section describes the grammar of the subset of Lua that we'll be
+describing. Numerous Lua constructs have been left out for the sake of
+simplicity, like multiple assignment for example. Whitespace has also been left
+out of the grammar, as have the optional semicolons. 
+
+\newpage
+
+\begin{grammar}
+	<block> ::= <stmt> <block> | `' % | `break' | `continue' | `return' <expr>
+	
+	<expr> ::= <bool> | <number> | <string> | <table> | <func>  | <nil> | <table> | <co-wrap>
+		| <lambda> 
+	
+	<nil> ::= `nil'
+	
+	<bool> ::= `true' | `false'
+	
+	<stmt> ::= <if> | <while> | <assign> | <return> | <expr> | % <table-access> |
+		<co-yield> | <co-resume> | <call>
+	
+	<assign> ::= <var> `=' <expr>
+	
+	<return> ::= `return' <expr>
+	
+	<if> ::= `if' <expr> `then' <block> <else-ifs> <else> `end'
+
+	% <do> ::= `do' <block> `end'
+	
+	<else-ifs> ::= `elseif' <expr> `then' <block> <else-ifs> | `'
+	
+	<else> ::= `else' <block> | `'
+	
+	<while> ::= `while' <expr> `do' <block> `end'
+	
+	% <table-access> ::= <var> `['<expr> `]=' <expr>
+	
+	% <table> ::= `{' `}' | ...
+
+	<co-wrap> ::= `coroutine.wrap(' <func> `)'
+
+	<co-yield> ::= <var> `=' `coroutine.yield(' <expr> `)'
+
+	<co-resume> ::= <var> `=' <coroutine> `(' <expr> `)'
+
+	<call> ::= <var> `=' <func> `(' <expr> `)'
+
+	<lambda> ::= `function (' <var> `)' <block> `end'
+\end{grammar}
+
+This grammar is still incomplete.
+
+% TODO: Fill in <var>, <expr>, <bool>, <number>, <string>, <func-def>, <call>,
+% <table>, <co-create>, <co-wrap>, <co-resume>, <co-yield>
+
+\subsection{Expected Problems}
+% Verwacht je nu al problemen bij de beschrijving van de syntax, benoem die hier dan al.
+
+\section{Description of the semantics}
+% Natuurlijk hoef je hier nog geen complete lijst met semantiekregels te geven, maar je moet al wel een idee hebben hoe je denkt te gaan werken.
+The normal rules will be worked out in the nearby future, as seen in appendix A. We will, however, start some of the harder semantical expressions, namely the thread and the table rules.\\
+
+\subsection{Approach}
+For this project we have chosen to apply Structural Operational Semantics. This is because with SOS we can easily add extra information to the states. %TODO
+%Ga je voor ns, sos of nog heel iets anders? En waarom?
+\subsection{Concepts}
+We will mainly be explaining coroutines, if possible we will expand this with tables, yielding and resuming, pipes and filters. To explain this we will also need to describe functions.
+% Probeer ook vast iets te zeggen over de concepten die je nodig hebt:  
+\subsubsection{States}
+%wat zijn je toestanden (als je toestanden gebruikt),
+Because we are going to use SOS we will look at very small steps concerning the states of the program. %moar  
+\subsubsection{Transitions}
+% wat zijn je transities,
+There are two types of transitions. We have the form where a statement and a state go to a state: $\pss{S}{s}{s'}$. Secondly we have the form $\psq{S}{s}{S'}{s'}$. This is from a statement and state to a (new) statements and a (new) state. 
+\subsubsection{Types}
+Lua does not have a strong type system. Whenever a value is called the value is passed and the user doesn't need to apply which type this value has. In this model we will restrict ourselves to Coroutines, Tables, Booleans, Strings and Integers as types.\\
+$
+\begin{array}{lcl}
+\text{Boolean} &::=& \textbf{tt} | \textbf{ff}\\
+\text{Integer} &::=& 0 | 1 | 2 | ...\\
+\text{String} &::=& <Char,String>| \lambda \\
+\text{Char} &::=& a|...|z|A|...|Z \\
+\text{Table} &::=& \text{Value} \to \text{Value}\\ % <- Serena
+\text{Value} &::=& \text{Boolean} | \text{Integer} | \text{String} | \text{Char} | \text{Table} | \text{Coroutine} \\
+\text{Coroutine} &::=& [to be continued] \\ % Lars' approved
+\end{array}\\
+$
+% welke types spelen een rol, etcetera.
+
+\subsection{Rules}
+$
+\begin{array}{rl}
+\rass & \psq{\sass{x}{a}}{s}{\pass{x}{a}}{s}\\
+ & \\
+\rskip & \pss{\sskip}{s}{s} \\
+ & \\
+\rcomp & 
+$$
+\begin{prooftree}
+\psq{S_1}{s}{S'_1}{s'}
+\justifies
+\psq{S_1;S_2}{s}{S'_1;S_2}{s'}
+\end{prooftree}
+$$ \\
+ & \\
+\riftt & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_1}{s} \\
+ & \text{where } \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{tt}\\
+  & \\
+\rifff & \psq{\text{if }\textbf{b}\text{ then } S_1\text{ else }S_2}{s}{S_2}{s}\\
+ & \text{where } \mathcal{B}\llbracket\textbf{b}\rrbracket s=\mbox{ff} \\
+  & \\
+\rwhile &
+\psq{\text{while }\textbf{b}\text{ do }S}{s}{\text{if }\textbf{b}\text{ then (S; while }\textbf{b}\text{ do S) else skip}}{s}\\
+ & \\
+\text{[resume]} &
+ $$
+ \begin{prooftree}
+\psqstar{\text{B}_I}{ \text{let(merge(env}_I, \text{env}_O)\text{r}_I,\mathds{E}\llbracket \text{a}_O \rrbracket \text{env}_O)}{\text{r}'_I=\text{coroutine.yield(a}_I)\text{B}'_I}{\text{env}'_I} 
+\justifies
+\psq{\text{r}_O=\text{c(a}_O\text{)B}_O}{\text{env}_O}{\text{B}_O }{\text{let(set(merge(env}_O,\text{env}'_I), \text{c}, (\text{env}'_I, \text{r}'_I, \text{B}'_I)), \text{r}_O, \mathds{E} \llbracket \text{a}_I \rrbracket \text{env}'_I))}
+\end{prooftree}
+$$ \\
+ & \text{where env}_I, \text{r}_I, \text{B}_I $=$ \text{get(env}_O,\text{c)}\\
+ & \\
+\text{[wrap]} & \pss{\text{c=coroutine.wrap(f)}}{\text{env}}{\text{set(env,c,(env}_f\text{,v}_f\text{,B}_f\text{))}}\\
+& \text{where env}_f\text{, v}_f\text{,B}_f = \mathds{E}\llbracket \text{f} \rrbracket \text{env}.\\
+\end{array}
+$
+
+\subsection{Environment}
+$
+\begin{array}{rl}
+\text{Env} = & (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref}) \\
+\text{get((L,G,ref}_N\text{), v)} =   & \begin{cases} \text{G(L(v))} & \text{ if } L(v)\in \text{Ref} \\
+                    \text{L(v)} & \text{ else } \\ \end{cases}\\
+\text{merge((L,\_,}\text{ref}_{N_1}\text{),(\_,G,}\text{ref}_{N_2}\text{)} = & \text{(L,G,max(ref}_{N_1},\text{ref}_{N_2})) \\
+\text{let((L,G,ref}_N\text{),v, x)} =& \Big(\Big( v'\mapsto 
+\begin{cases}
+\text{x} & \text{ if } v=v'\\
+\text{L(v')} & \text{ else} \\
+\end{cases}\Big), \text{G,ref}_N\Big)\\
+\text{set((L,G,ref}_N\text{), v, c)} =& \Big(L,\Big(r \mapsto 
+\begin{cases}
+\text{x} & \text{ if } \text{L(v)} = \text{r} \\
+\text{G(r)} & \text{ else } \\
+\end{cases}\Big),\text{ref}_N\Big)\\
+\text{def((L,G,ref}_N\text{),v,x)} = & \Big(\Big(v' \mapsto 
+\begin{cases}
+\text{ref}_N & \text{ if } \text{v'=v} \\
+\text{L(v')} & \text{ else} \\
+\end{cases} \Big),\Big( \text{r}\mapsto
+\begin{cases}
+\text{x} & \text{ if } \text{r}=\text{ref}_N\\
+\text{G(r)} & \text{ else} \\
+\end{cases}\Big), \text{ref}_{N+1}\Big) \\
+\text{Ref} = & \{\text{ref}_n | n\in \mathbb{N}\} \\
+\text{new} = & ( x\mapsto \text{nil}, x\mapsto \text{nil}, \text{ref}_O) \\
+\text{Nil} = & \{\text{nil}\} \\
+\end{array}
+$
+
+\subsection{Expected Problems}
+We expect some problems with describing how values are passed on. For example, if we want to call to print an Integer, Lua provides us with the toString value for that Integer. We need to figure out a good method for describing how Lua does this. 
+% Verwacht je nu al problemen bij de beschrijving van de semantiek, benoem die hier dan al.
+
+\section{Analysis}
+We will prove that what is printed is actually the thing that needs to be printed.
+\subsection{Example Code}
+\lstinputlisting{code.lua}
+\subsection{Elaboration}
+To be added. % Serenapproved
+\newpage
+\section*{Appendix}
+\appendix
+\section{Planning}
+\begin{tabular}{|r|l|}
+\hline
+ Deadline   &  Summary \\
+ \hline
+    ? & Apply feedback \\
+    13 June & Finish Analysis\\
+    17 June & Submit final version project \\
+    \hline
+\end{tabular}
+% the \\ insures the section title is centered below the phrase: AppendixA
+
+%% Extra dingen!
+% Multiple assignment toevoegen
+% Impact semicolon's (feedback_v1)
+
+\end{document}
