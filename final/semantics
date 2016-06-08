@@ -1,0 +1,25 @@
+resume_yield:
+where(justifies(
+ssirss(B_I, s_I', block(coyield(r_I', a_I), B_I'), s_I''),
+ssiss(block(call(r_O, c, a_O), B_I), s_O, B_O, s_O')),
+(s_I, r_I, B_I) = get(s_O, c),
+s_I' = let(merge(s_I, s_O), r_I, eval(a_O, s_O)),
+s_O' = let(set(merge(s_O, s_I''), c, (s_I'', r_I', B_I')),
+    r_O, eval(a_I, s_I'')))
+
+resume_ret:
+where(justifies(
+ssirss(B_I, s_I', ret(a_I), s_I''),
+ssiss(block(call(r_O, c, a_O), B_I), s_O, B_O, s_O')),
+(s_I, r_I, B_I) = get(s_O, c),
+s_I' = let(merge(s_I, s_O), r_I, eval(a_O, s_O)),
+s_O' = let(set(merge(s_O, s_I''), c, nil()), r_O, eval(a_I, s_I'')))
+
+resume_nil:
+where(justifies(
+ssirs(B_I, s_I', s_I''),
+ssiss(block(call(r_O, c, a_O), B_I), s_O, B_O, s_O')),
+(s_I, r_I, B_I) = get(s_O, c),
+s_O' = let(set(merge(s_O, s_I''), c, nil()), r_O, nil()))
+
+

@@ -1,17 +1,25 @@
 # Coole makefile
 # Copyrights to Niek
-clean: tex rm open
+default: test.pdf rm
 
-tex:
-		pdflatex --shell-escape lua.tex
-		pdflatex --shell-escape lua.tex
+test.tex:
+	python3 tex.py
+
+test.pdf: test.tex
+	pdflatex --shell-escape test.tex
+	pdflatex --shell-escape test.tex
+
+lua.pdf: lua.tex
+	pdflatex --shell-escape lua.tex
+	pdflatex --shell-escape lua.tex
 
 rm:
-		- mv *.aux logs
-		- mv *.log logs
-		- mv *.toc logs
-		- mv *.dot logs
-		- mv *-dot2tex-*.tex logs
-
-open:
-		okular lua.pdf &
+	rm -r logs/
+	mkdir -p logs/
+	- mv test.tex logs/
+	- mv *.aux logs/
+	- mv *.log logs/
+	- mv *.toc logs/
+	- mv *.dot logs/
+	- mv *.out logs/
+	- mv *-dot2tex-*.tex logs/
