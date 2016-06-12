@@ -1,0 +1,61 @@
+# Introduction
+
+Lua is a scripting language often used in game engines. It is somewhat similar
+to Python, but less advanced. One of the more interesting features it supports
+is coroutines. Coroutines are similar to threads in the sense that they each
+have their own execution context. They can run separately from each other, but
+unlike threads, coroutines cannot run in parallel. Coroutines must be explicitly
+resumed in order for them to run, and once they run, they must explicitly yield
+to let the caller run again. Every time a resume or yield happens, data can be
+passed along, which allows coroutines to communicate with each other.
+
+In this article, we're going to define structural operational semantics for
+coroutines in Lua. We'll restrict ourselves to a small subset of Lua in order to
+focus on the concept of coroutines. Before we move on to the theory, let's have
+a look at an example of Lua code using coroutines.
+
+## Example code
+
+\lstinputlisting{code.lua}
+
+# Syntax
+
+syntax()
+
+# Semantics
+
+## Values
+
+% We define the usual boolean operations on false() and true()
+
+## State
+
+% TODO: new,merge,def,get,let,set
+
+## Expressions
+
+## Simple rules
+
+semantics(empty)
+
+semantics(comp_1)
+semantics(comp_2)
+
+semantics(ass)
+
+semantics(if_true)
+semantics(if_false)
+
+semantics(while)
+
+## Function rules
+
+## Coroutine rules
+
+semantics(wrap)
+
+semantics(resume_yield)
+semantics(resume_ret)
+semantics(resume_nil)
+
+# Analysis

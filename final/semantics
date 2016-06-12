@@ -1,3 +1,34 @@
+
+empty:
+ssis(empty(), s, s)
+
+comp_1:
+justifies(
+ssiss(S, s, S', s'),
+ssiss(block(S, B), s, block(S', B), s'))
+
+comp_2:
+justifies(
+ssis(S, s, s'),
+ssiss(block(S, B), s, B, s'))
+
+ass:
+ssis(assign(v, e), s, let(s, v, eval(e, s)))
+
+if_true:
+when(ssiss(if(b, B_1, B_2), s, B_1, s), eval(b, s))
+
+if_false:
+when(ssiss(if(b, B_1, B_2), s, B_2, s), \neg eval(b, s))
+
+while:
+ssiss(while(b, B), s, if(b, block(B, while(b, B)), empty()), s)
+
+wrap:
+where(
+ssis(cowrap(c, f), s, set(s, c, (s_f, v_f, B_f))),
+(s_f, v_f, B_f) = eval(f, s))
+
 resume_yield:
 where(when(justifies(
 ssirss(B_I, s_I', block(coyield(r_I', a_I), B_I'), s_I''),
@@ -25,32 +56,3 @@ get(s_O, c) \in Co),
 (s_I, r_I, B_I) = get(s_O, c),
 s_O' = let(set(merge(s_O, s_I''), c, nil()), r_O, nil()))
 
-wrap:
-where(
-ssis(cowrap(c, f), s, set(s, c, (s_f, v_f, B_f))),
-(s_f, v_f, B_f) = eval(f, s))
-
-if_true:
-when(ssiss(if(b, B_1, B_2), s, B_1, s), eval(b, s))
-
-if_false:
-when(ssiss(if(b, B_1, B_2), s, B_2, s), \neg eval(b, s))
-
-while:
-ssiss(while(b, B), s, if(b, block(B, while(b, B)), empty()), s)
-
-ass:
-ssis(assign(v, e), s, let(s, v, eval(e, s)))
-
-comp_1:
-justifies(
-ssiss(S, s, S', s'),
-ssiss(block(S, B), s, block(S', B), s'))
-
-comp_2:
-justifies(
-ssis(S, s, s'),
-ssiss(block(S, B), s, B, s'))
-
-empty:
-ssis(empty(), s, s)

@@ -1,4 +1,5 @@
-packages = ['prooftree', 'amsmath', 'mathtools', 'syntax', 'dsfont', 'stmaryrd']
+packages = ['prooftree', 'amsmath', 'mathtools', 'syntax', 'dsfont', 'stmaryrd',
+        'listings']
 
 def document(body, title='', author=''):
     start = r'\documentclass{article}' + \
@@ -108,7 +109,11 @@ def readsyntax(filename):
     for line in lines2:
         syntaxrule(line)
 
-def syntax(rule, index=None):
+syntax = None
+
+def syntax(rule=None, index=None):
+    if rule is None:
+        return makesyntax()
     if index is not None:
         return syntaxrules[rule][index]
     return syntaxrules[rule]
@@ -168,7 +173,7 @@ def convert(s, d, i=0):
         else:
             name = ''
         i += 1
-    return parts[0]
+    return ','.join(parts)
 
 textrm = wrap(r'\textrm{\mbox{', '}}')
 def envf(name, count):
@@ -182,6 +187,34 @@ def envf(name, count):
         return wrapper(*args)
     return f
 
+def linepass(text):
+    lines = text.split('\n')
+    lines2 = []
+    for line in lines:
+        if line.startswith('###'):
+            lines2.append(r'\subsubsection{' + line[3:].strip() + '}')
+        elif line.startswith('##'):
+            lines2.append(r'\subsection{' + line[2:].strip() + '}')
+        elif line.startswith('#'):
+            lines2.append(r'\section{' + line[1:].strip() + '}')
+        elif line.startswith('%'):
+            lines2.append('')
+        else:
+            lines2.append(line)
+    return '\n'.join(lines2)
+
+def readdocument(filename, funcs):
+    with open(filename, 'r') as f:
+        contents = f.read()
+    contents = linepass(contents)
+    contents = convert(contents, funcs)
+    contents = document(contents, title='Semantics for Lua coroutines',
+            author='Serena Rietbergen, Frank Gerlings, Lars Jellema')
+    return contents
+
+def semantics(x):
+    return semanticsrules[x]
+
 readsyntax('syntax')
 
 funcs = syntaxrules.copy()
@@ -189,6 +222,8 @@ funcs.update({
     'where': where,
     'justifies': justifies,
     'eval': evalexpr,
+    'semantics': lambda x: semanticsrules[x],
+    'syntax': syntax,
     'when': lambda a, b: a + '\quad [' + b + ']',
     'ssirss': lambda a, b, c, d: ssiss(a, b, c, d, True),
     'ssirs': lambda a, b, c: ssiss(a, b, None, c, True),
@@ -209,11 +244,7 @@ funcs.update({
 
 readsemantics('semantics', funcs)
 
-syntax = '\section{Syntax}' + makesyntax()
-semantics = '\section{Semantics}' + makesemantics()
-
-doc = document(syntax + semantics, title='Semantics for Lua coroutines',
-        author='Serena Rietbergen, Frank Gerlings, Lars Jellema')
+doc = readdocument('document', funcs)
 
 with open('test.tex', 'w') as f:
     f.write(doc)
