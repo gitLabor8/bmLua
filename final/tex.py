@@ -19,14 +19,11 @@ code = wrap(r'\lit*{\mbox{', '}}')
 synt = wrap(r'\synt{\mbox{', r'}\thinspace}')
 text = wrap(r'\textrm{\mbox{', r'}}')
 
-def justifies(subs='', body='', rule=''):
+def justifies(subs='', body=''):
     if isinstance(subs, str):
         subs = [subs]
-    r = r'\prooftree ' + '\quad '.join(subs) + r'\justifies ' + body
-    if rule != '':
-        r += r'\using{' + mbox('[' + rule + ']') + '}'
-    r += r'\endprooftree '
-    return r
+    return r'\prooftree ' + '\quad '.join(subs) + r'\justifies ' + body + \
+            r'\endprooftree '
 
 def where(body='', *wheres):
     wheres = ['&=&'.join(where.split('=', 1)) for where in wheres]
@@ -40,16 +37,6 @@ def ssiss(leftstmt, leftstate, rightstmt, rightstate, star=False):
             rightstmt is None else r'\langle ' + \
             rightstmt + ',' + rightstate + \
             r'\rangle ')
-
-def ssirs(s, ls, rs):
-    return ssiss(s, ls, None, rs, star=True)
-
-def ssirss(*args):
-    return ssiss(*args, star=True)
-
-def ssis(leftstmt, leftstate, rightstate):
-    return r'\langle ' + leftstmt + ',' + leftstate + r'\rangle\Rightarrow ' + \
-            rightstate
 
 def evalexpr(expr, env):
     return r'\mathds{E}\llbracket ' + expr + r'\rrbracket ' + env
@@ -128,12 +115,15 @@ def syntax(rule, index=None):
 
 def compilesemantics(k, v, funcs):
     k = '_'.join([textrm(x) for x in k.split('_')])
-    def newjustifies(a, b):
-        return r'\begin{array}{rl}[' + k + ']&' + justifies(a, b) + \
-            r'\end{array}'
+    used = [False]
+    def newwhere(body, *wheres):
+        used[0] = True
+        return where('[' + k + ']\quad' + body, *wheres)
     funcs = funcs.copy()
-    funcs['justifies'] = newjustifies
+    funcs['where'] = newwhere
     v = convert(v, funcs)
+    if not used[0]:
+        v = '[' + k + ']\quad' + v
     return mathmode(v)
 
 semanticsrules = dict()
@@ -145,7 +135,7 @@ def readsemantics(filename, funcs):
         in contents.split('\n\n') if rule.strip()]
     for k, v in rules:
         semanticsrules_order.append(k)
-        semanticsrules[k] = compilesemantics(k, v, funcs)
+        semanticsrules[k] = compilesemantics(k, v.replace('\n', ''), funcs)
 
 def makesemantics():
     s = r'\\'.join([semanticsrules[k] for k in semanticsrules_order])
@@ -160,6 +150,8 @@ def convert(s, d, i=0):
         if c == ',':
             parts.append('')
         elif c == ')':
+            if parts[0] == '' and len(parts) == 1:
+                return i, ()
             return i, parts
         elif c == '(':
             i, subs = convert(s, d, i + 1)
@@ -197,6 +189,7 @@ funcs.update({
     'where': where,
     'justifies': justifies,
     'eval': evalexpr,
+    'when': lambda a, b: a + '\quad [' + b + ']',
     'ssirss': lambda a, b, c, d: ssiss(a, b, c, d, True),
     'ssirs': lambda a, b, c: ssiss(a, b, None, c, True),
     'ssiss': lambda a, b, c, d: ssiss(a, b, c, d, False),
@@ -209,7 +202,9 @@ funcs.update({
     'new': envf('new', 0),
     'ret': syntax('block', 1),
     'block': syntax('block', 0),
-    'epsilon': lambda: r'\epsilon '
+    'false': syntax('bool', 0),
+    'true': syntax('bool', 1),
+    'empty': lambda: r'\epsilon '
 })
 
 readsemantics('semantics', funcs)

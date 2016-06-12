@@ -2,7 +2,7 @@
 # Copyrights to Niek
 default: test.pdf rm
 
-test.tex:
+test.tex: tex.py
 	python3 tex.py
 
 test.pdf: test.tex

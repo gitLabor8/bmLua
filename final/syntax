@@ -1,6 +1,6 @@
 block = stmt block | 'return' var | ''
 expr = var | nil | bool | number | lambda
-stmt = if | while | assign | co-yield | call | co-wrap
+stmt = if | while | assign | coyield | call | cowrap
 bool = 'true' | 'false'
 nil = 'nil'
 if = 'if' expr 'then' block 'else' block 'end'
@@ -11,8 +11,8 @@ coyield = var '=' 'coroutine.yield' '(' expr ')'
 call = var '=' var '(' expr ')'
 lambda = 'function' '(' var ')' block 'end'
 nonzero = '1' | ... | '9'
-digit = '0' | non-zero
-digits = digits digit | non-zero
+digit = '0' | nonzero
+digits = digits digit | nonzero
 number = digits | '-' digits
 letter = 'a' | ... | 'z' | 'A' | ... | 'Z' | '_'
 var = letter var | letter
