@@ -1,5 +1,5 @@
 packages = ['prooftree', 'amsmath', 'mathtools', 'syntax', 'dsfont', 'stmaryrd',
-        'listings']
+        'listings', 'amsfonts']
 
 def document(body, title='', author=''):
     start = r'\documentclass{article}' + \
@@ -165,7 +165,6 @@ def convert(s, d, i=0):
                 i, subs = convert(s, d, i + 1)
             if name != '' and name not in d:
                 print('####### Function not found: ' + name)
-            if name == 'noscript': print(repr(subs))
             if name in d:
                 subs = d[name](*subs)
             elif name == 'noscript':
@@ -221,6 +220,10 @@ def readdocument(filename, funcs):
             author='Serena Rietbergen, Frank Gerlings, Lars Jellema')
     return contents
 
+def importfile(filename):
+    with open(filename, 'r') as f:
+        return f.read()
+
 def semantics(x):
     return semanticsrules[x]
 
@@ -231,6 +234,7 @@ funcs.update({
     'where': where,
     'justifies': justifies,
     'eval': evalexpr,
+    'import': importfile,
     'semantics': lambda x: semanticsrules[x],
     'syntax': syntax,
     'when': lambda a, b: a + '\quad [' + b + ']',
