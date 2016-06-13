@@ -2,7 +2,7 @@
 # Copyrights to Niek
 default: test.pdf rm
 
-test.tex: tex.py
+test.tex: tex.py syntax semantics document
 	python3 tex.py
 
 test.pdf: test.tex
@@ -14,7 +14,7 @@ lua.pdf: lua.tex
 	pdflatex --shell-escape lua.tex
 
 rm:
-	rm -r logs/
+	- rm -r logs/
 	mkdir -p logs/
 	- mv test.tex logs/
 	- mv *.aux logs/
