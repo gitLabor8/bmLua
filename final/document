@@ -47,50 +47,7 @@ syntax()
 % We define the usual boolean operations on false() and true()
 
 ## State
-$L(v) = {v | v = Var}$\\
-L(v) is a set with local variables. It will contain all our normal variables, these are nil, bools and numbers.\\
-$G(v) = {v | v = Var}$\\
-G(v) is a set with global variables. It will contain all the coroutinetuples.\\
-$ref_N = Ref$\\
-ref_N is the next free referencevalue. These will be used to identify coroutines.\\
-\\
-$\text{s} =  (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref})$ \\
-The state s is a tuple that contains the locals, globals and the next free referencenumber.\\
-$\text{Ref} = \{\text{ref}_n | n\in \mathbb{N}\} \\$
-References are natural numbers.
-$\text{new} = ( x\mapsto \text{nil}, x\mapsto \text{nil}, \text{ref}_O) \\$
-new instantiates a state with nil values.
-$\text{Nil} = \{\text{nil}\} \\$
-nil is the set consisting of the nil element.
-$\text{get((L,G,ref}_N\text{), v)} =    \begin{cases} \text{G(L(v))} \text{ if } L(v)\in \text{Ref} \\
-                    \text{L(v)} & \text{ else } \\ \end{cases}\\$
-The get-function takes a state and a variablename and looks it up in the collection of locals.\\
-$\text{merge((L_1,G_1}\text{ref}_{N_1}\text{),(L_2,G_2,}\text{ref}_{N_2}\text{)} =  \text{(L_1,G_2,max(ref}_{N_1},\text{ref}_{N_2})) \\$
-Merge combines two states. It takes the locals of the first state and the globals of the second state. Lastly, it takes the maximum of the two reference numbers, to ensure that this number isn't used as identifier yet.\\
-$\text{let((L,G,ref}_N\text{),v, x)} =\Big(\Big( v'\mapsto 
-\begin{cases}
-\text{x} \text{ if } v=v'\\
-\text{L(v')} \text{ else} \\
-\end{cases}\Big), \text{G,ref}_N\Big)\\$
-The let-function assigns a value x to a variable v in the set of locals of the given state.\\
-$\text{set((L,G,ref}_N\text{), v, c)} = \Big(L,\Big(r \mapsto 
-\begin{cases}
-\text{x}  \text{ if } \text{L(v)} = \text{r} \\
-\text{G(r)}  \text{ else } \\
-\end{cases}\Big),\text{ref}_N\Big)\\$
-The set-function assigns a value x to a variable v in the set of globals of the given state.\\
-$\text{def((L,G,ref}_N\text{),v,x)} =  \Big(\Big(v' \mapsto 
-\begin{cases}
-\text{ref}_N  \text{ if } \text{v'=v} \\
-\text{L(v')}  \text{ else} \\ 
-\end{cases} \Big),\Big( \text{r}\mapsto
-\begin{cases}
-\text{x} \text{ if } \text{r}=\text{ref}_N\\
-\text{G(r)} \text{ else} \\
-\end{cases}\Big), \text{ref}_{N+1}\Big) \\$
-Def saves a coroutine in the current state. For this, it creates a reference with variablename v and value $ref_N$ to the coroutine in the set of locals. It also saves the coroutine x in the set of globals with the reference $ref_N$. Lastly, it heightens up the next free referencevalue by one.\\
-The coroutine is now saved within the set of globals with a unique referencevalue and can be accessed by looking up this referencevalue in the set of locals.\\
-
+import(state.tex)
 
 ## Expressions
 
