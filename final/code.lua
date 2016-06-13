@@ -1,28 +1,17 @@
--- from http://lua-users.org/wiki/CoroutinesTutorial
-
-function odd(x)
-  print('A: odd', x)
-  coroutine.yield(x)
-  print('B: odd', x)
+function indec(x)
+	delta = 1
+	pointer = 0
+	while true do
+		if x then
+			delta = delta * (-1)
+		end
+		pointer = pointer + delta
+		x = coroutine.yield(pointer)	
+	end
 end
 
-function even(x)
-  print('C: even', x)
-  if x==2 then return x end
-  print('D: even ', x)
-end
+co = coroutine.wrap(indec)
+it0 = co(false)		-- it0 = 1 
+it1 = co(false)		-- it1 = 2
+it2 = co(true)		-- it2 = 1
 
-co = coroutine.create(
-  function (x)
-    for i=1,x do
-      if i==3 then coroutine.yield(-1) end
-      if i % 2 == 0 then even(i) else odd(i) end
-    end
-  end)
-
-count = 1
-while coroutine.status(co) ~= 'dead' do
-  print('----', count) ; count = count+1
-  errorfree, value = coroutine.resume(co, 5)
-  print('E: errorfree, value, status', errorfree, value, coroutine.status(co))
-end
