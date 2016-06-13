@@ -1,20 +1,35 @@
-block = stmt block | 'return' var | ''
-expr = var | nil | bool | number | lambda
-stmt = if | while | assign | coyield | call | cowrap
-bool = 'true' | 'false'
 nil = 'nil'
-if = 'if' expr 'then' block 'else' block 'end'
-while = 'while' expr 'do' block 'end'
-assign = var '=' expr
-cowrap = var '=' 'coroutine.wrap' '(' expr ')'
-coyield = var '=' 'coroutine.yield' '(' expr ')'
-call = var '=' var '(' expr ')'
-lambda = 'function' '(' var ')' block 'end'
-nonzero = '1' | ... | '9'
-digit = '0' | nonzero
-digits = digits digit | nonzero
+bool = 'true' | 'false'
+digit = '0' | ... | '9'
+digits = digits digit | digit
 number = digits | '-' digits
+
 letter = 'a' | ... | 'z' | 'A' | ... | 'Z' | '_'
 var = letter var | letter
 
+add = expr '+' expr
+sub = expr '-' expr
+mul = expr '*' expr
+div = expr '/' expr
+and = expr 'and' expr
+or = expr 'or' expr
+neg = '-' expr
+not = 'not' expr
+parens = '(' expr ')'
+lambda = 'function' '(' var ')' block 'end'
 
+nexpr = add | sub | mul | div | neg
+bexpr = and | or | not
+const = nil | bool | number
+expr = const | nexpr | bexpr | parens | lambda | var
+
+block = stmt block | 'return' var | ''
+assign = var '=' expr
+if = 'if' expr 'then' block 'else' block 'end'
+while = 'while' expr 'do' block 'end'
+
+cowrap = var '=' 'coroutine.wrap' '(' expr ')'
+coyield = var '=' 'coroutine.yield' '(' expr ')'
+call = var '=' var '(' expr ')'
+
+stmt = if | while | assign | coyield | call | cowrap

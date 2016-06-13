@@ -159,12 +159,21 @@ def convert(s, d, i=0):
                 return i, ()
             return i, parts
         elif c == '(':
-            i, subs = convert(s, d, i + 1)
-            if name != '':
-                subs = d[name](*subs)
+            if name == 'noscript':
+                i, subs = convert(s, dict(), i + 1)
             else:
-                subs = '(' + ','.join(subs) + ')'
-            parts[-1] = parts[-1][:-len(name)]
+                i, subs = convert(s, d, i + 1)
+            if name != '' and name not in d:
+                print('####### Function not found: ' + name)
+            if name == 'noscript': print(repr(subs))
+            if name in d:
+                subs = d[name](*subs)
+            elif name == 'noscript':
+                subs = ','.join(subs)
+            else:
+                subs = name + '(' + ','.join(subs) + ')'
+            if name != '':
+                parts[-1] = parts[-1][:-len(name)]
             parts[-1] += subs.strip()
         else:
             parts[-1] += c
