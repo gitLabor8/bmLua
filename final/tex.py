@@ -42,6 +42,23 @@ def ssiss(leftstmt, leftstate, rightstmt, rightstate, star=False):
 def evalexpr(expr, env):
     return r'\mathds{E}\llbracket ' + expr + r'\rrbracket ' + env
 
+def casesf(*cases):
+    s = r'\begin{cases}'
+    while len(cases) > 1:
+        case, cond, cases = cases[0], cases[1], cases[2:]
+        s += case + '&' + cond + r'\\'
+    if len(cases) > 0:
+        s += cases[0] + r'&\\'
+    s = s[:-2] + r'\end{cases}'
+    return s
+
+def mathfn(var, *cases):
+    s = var + r'\mapsto'
+    if len(cases) == 1:
+        s += cases[0]
+        return s
+    return s + casesf(*cases)
+
 syntaxrules = dict()
 syntaxrules_order = []
 syntaxrules_rhs = set()
@@ -237,6 +254,9 @@ funcs.update({
     'import': importfile,
     'semantics': lambda x: semanticsrules[x],
     'syntax': syntax,
+    'fn': mathfn,
+    'n': text,
+    'cases': casesf,
     'when': lambda a, b: a + '\quad [' + b + ']',
     'ssirss': lambda a, b, c, d: ssiss(a, b, c, d, True),
     'ssirs': lambda a, b, c: ssiss(a, b, None, c, True),
