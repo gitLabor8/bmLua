@@ -123,12 +123,12 @@ def compilesemantics(k, v, funcs):
     used = [False]
     def newwhere(body, *wheres):
         used[0] = True
-        return where('[' + k + ']\quad' + body, *wheres)
+        return where('[' + k + ']\quad ' + body, *wheres)
     funcs = funcs.copy()
     funcs['where'] = newwhere
     v = convert(v, funcs)
     if not used[0]:
-        v = '[' + k + ']\quad' + v
+        v = '[' + k + ']\quad ' + v
     return mathmode(v)
 
 semanticsrules = dict()

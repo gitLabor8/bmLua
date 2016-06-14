@@ -1,4 +1,4 @@
-function indec(x)
+indec = function (x)
 	delta = 1
 	pointer = 0
 	while true do

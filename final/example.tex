@@ -1,0 +1,26 @@
+\lstset{%
+	language = [5.0]Lua,
+	basicstyle = \ttfamily,
+	tabsize = 4,
+	keywordstyle = \bfseries,
+}
+
+\lstinputlisting[language={[5.0]Lua}]{code.lua}
+
+\texttt{co = coroutine.wrap(indec)} only creates the coroutine, it does not
+start it. When \texttt{it0=co(false)} is called, the coroutine starts with
+\texttt{x=false}. The coroutine then enters the while-loop, and because
+\texttt{x=false} the program only executes the line
+\texttt{pointer=pointer+delta} which gives the variable \texttt{pointer} the
+value 1. When \texttt{coroutine.yield(pointer)} is executed, the coroutine
+yields and returns the value from \texttt{pointer}. This gives the varablie
+\texttt{it0} the value 1. Then \texttt{it1 = co(false)} will be executed. This
+will resume the coroutine with \texttt{x=false}. The coroutine resumes where it
+left off, which is in the while-loop. Because \texttt{x} is \texttt{false} the
+coroutine will again only execute \texttt{pointer=pointer+delta}, which will
+return the coroutine with the value of \texttt{pointer}, which is 2. This will
+lead to \texttt{it1=2}. Then the coroutine is resumed with \texttt{true} in the
+while-loop. Because it is resumed with \texttt{true}, \texttt{delta = delta *
+(-1)} will be executed, giving \texttt{delta} the value of \texttt{-1}. After
+this, \texttt{pointer=pointer + delta} will be executed. Lastly, the coroutine
+will yield with \texttt{pointer=1}, giving \texttt{it2} the value of \texttt{1}.
