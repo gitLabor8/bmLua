@@ -10,7 +10,6 @@ var = letter var | letter
 add = expr '+' expr
 sub = expr '-' expr
 mul = expr '*' expr
-div = expr '/' expr
 and = expr 'and' expr
 or = expr 'or' expr
 neg = '-' expr
@@ -18,7 +17,7 @@ not = 'not' expr
 parens = '(' expr ')'
 lambda = 'function' '(' var ')' block 'end'
 
-nexpr = add | sub | mul | div | neg
+nexpr = add | sub | mul | neg
 bexpr = and | or | not
 const = nil | bool | number
 expr = const | nexpr | bexpr | parens | lambda | var
