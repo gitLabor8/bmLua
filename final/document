@@ -56,15 +56,29 @@ semantics(call_nil)
 
 ## Coroutine rules
 
-semantics(wrap)\\
+semantics(wrap)
+
 The wrap-rule binds a function to a coroutine. The function itself will not be executed yet.\\
 
-The resume rule resumes a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. The rule takes the argument $a_O$ and instantiates the variable $r_I$ with it. Next, the blo
-After the resume, there are three cases of syntax that can be encountered to end the resume:
-semantics(resume_yield)\\
+The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. 
 
+A new state is created, $s_I'$, consisting of the locals of $s_I$, being the local variables that the coroutine had the last time it got wrapped/yielded, and the globals of $s_O$. The rule then takes the argument $a_O$ and instantiates the variable $r_I$ in $s_I'$ with it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
 
+Then, after a certain amount of steps later, there are three cases of syntax that can be encountered to end the resume and switch back to the outside piece of code:
+semantics(resume_yield)
+
+Case 1: a yield is encountered.
+
+A new state $s_O'$ is formed with the locals of the old $s_O$ and the globals of current state $s_I''$. It also updates the value of the coroutine $c$. It does so by giving it the update state $s_I''$, the new variable that needs to be initialised $r_I'$ and the updated block of syntax $B_I'$ respectively. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
 semantics(resume_ret)
+
+Case 2: a return is encountered.
+
+Again, a new state $s_O'$ is formed by taking the locals of the old $s_O$ and the globals of $s_I''$. It also updates the value of the coroutine $c$. However, this time the coroutine has ended, so $c$ gets updated to nil(). This way, the next time $c$ gets called, $c$ can't be unpacked into the tuple ($s_I$, $r_I$, $B_I$) and the resume rules wil not patternmatch, resulting in an error. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
 semantics(resume_nil)
+
+Case 3: $B_I$ ends in a final state $s_I''$
+
+Like the other two cases, $s_O'$ consists of the locals of the original $s_O$ and the globals of $s_I''$. Then, we update the coroutine $c$ to nil(). Lastly, we have nothing to return, so we set $r_O$ to nil().
 
 # Analysis
