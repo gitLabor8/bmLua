@@ -49,13 +49,13 @@ References are not natural numbers.
 
 \[n(Ref) = \{ n(ref)_n | n \in \mathbb{N} \}\]
 
-nil is the set consisting of the nil element.
+Nil is the set consisting of the nil element.
 
 \[n(Nil) = \{ nil() \}\]
 
 \[new() = (fn(x, nil()), fn(x, nil()), n(ref)_0)\]
 
-new instantiates a state with nil values.
+new represents a fresh state with no bindings.
 
 \[get((L, G, n(ref)_N), v) = cases(G(L(v)), L(v) \in n(Ref), L(v))\]
 
@@ -119,7 +119,7 @@ The wrap-rule binds a function to a coroutine. The function itself will not be e
 
 The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. 
 
-A new state is created, $s_I'$, consisting of the locals of $s_I$, being the local variables that the coroutine had the last time it got wrapped/yielded, and the globals of $s_O$. The rule then takes the argument $a_O$ and instantiates the variable $r_I$ in $s_I'$ with it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
+A new state is created, $s_I'$, consisting of the locals of $s_I$, being the local variables that the coroutine had the last time it got wrapped/yielded, and the globals of $s_O$. The rule then takes the argument $a_O$ and sets the variable $r_I$ in $s_I'$ to it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
 
 Then, after a certain amount of steps later, there are three cases of syntax that can be encountered to end the resume and switch back to the outside piece of code:
 semantics(resume_yield)

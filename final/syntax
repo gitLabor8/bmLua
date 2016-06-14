@@ -1,8 +1,7 @@
 nil = 'nil'
 bool = 'true' | 'false'
 digit = '0' | ... | '9'
-digits = digits digit | digit
-number = digits | '-' digits
+number = number digit | digit
 
 letter = 'a' | ... | 'z' | 'A' | ... | 'Z' | '_'
 var = letter var | letter
@@ -31,4 +30,4 @@ cowrap = var '=' 'coroutine.wrap' '(' expr ')'
 coyield = var '=' 'coroutine.yield' '(' expr ')'
 call = var '=' var '(' expr ')'
 
-stmt = if | while | assign | coyield | call | cowrap
+stmt = assign | if | while | call | cowrap | coyield

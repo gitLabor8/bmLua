@@ -28,9 +28,9 @@ def justifies(subs='', body=''):
 
 def where(body='', *wheres):
     wheres = ['&=&'.join(where.split('=', 1)) for where in wheres]
-    return r'\left.\begin{array}{c}' + body + r"\\\begin{array}{crcl}"\
+    return r'\begin{array}{c}' + body + r"\\\begin{array}{crcl}"\
             r'\textrm{\textbf{where}}&' \
-            + r'\\&'.join(wheres) + r'\end{array}\end{array}\right.'
+            + r'\\&'.join(wheres) + r'\end{array}\end{array}'
 
 def ssiss(leftstmt, leftstate, rightstmt, rightstate, star=False):
     return r'\langle ' + leftstmt + ', ' + leftstate + \
@@ -240,9 +240,6 @@ def readdocument(filename, funcs):
 def importfile(filename):
     with open(filename, 'r') as f:
         return f.read()
-
-def semantics(x):
-    return semanticsrules[x]
 
 readsyntax('syntax')
 
