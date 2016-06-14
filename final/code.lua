@@ -4,7 +4,7 @@ indec = function (x)
 	while true do
 		if x then
 			delta = delta * (-1)
-		end
+		else end
 		pointer = pointer + delta
 		x = coroutine.yield(pointer)	
 	end
