@@ -11,7 +11,7 @@ indec = function (x)
 end
 
 co = coroutine.wrap(indec)
-it0 = co(false)		-- it0 = 1 
-it1 = co(false)		-- it1 = 2
-it2 = co(true)		-- it2 = 1
+it0 = co(false)
+it1 = co(false)
+it2 = co(true)
 
