@@ -22,16 +22,16 @@ import(example.tex)
 
 syntax()
 
-Most part of this syntax is very similar to the syntax of While, apart of some slight changes in keywords. e.g. "while $<expr>$ do $<block>$ end" instead of "while b do S" where b is an expression and S is a block. However, three relatively big things are different:
+Most part of this syntax is very similar to the syntax of While, apart of some slight changes in keywords. e.g. "while $\langle expr \rangle$ do $\langle block \rangle$ end" instead of "while b do S" where b is an expression and S is a block. However, three relatively big things are different:
 
-First of all, Lua doesn't have strong typing, while While does. This means that we do not know what the type of an expression is, until we've fully evaluated the expression. In our example, this leads to the b in While being an $<expr>$ in our model of Lua.
+First of all, Lua doesn't have strong typing, while While does. This means that we do not know what the type of an expression is, until we've fully evaluated the expression. In our example, this leads to the b in While being an $\langle expr \rangle$ in our model of Lua.
 
-Second, Lua's syntactic structure consists of "blocks" instead of While's "statements". This, for instance, allows Lua to have an arbitrary number of semicolons in between statements. Primairly, this structure guarentees that the "return <var>" is at the end of a block. In our example, this leads to S in While being a $<block>$ in our model of Lua.
+Second, Lua's syntactic structure consists of "blocks" instead of While's "statements". This, for instance, allows Lua to have an arbitrary number of semicolons in between statements. Primairly, this structure guarentees that the "return $\langle var \rangle$" is at the end of a block. In our example, this leads to S in While being a $\langle block \rangle$ in our model of Lua.
 
-Lastly, we have added syntax to model coroutines. This leads to the existence of $<cowrap>$ and $<coyield>$.\\
+Lastly, we have added syntax to model coroutines. This leads to the existence of $\langle cowrap \rangle$ and $\langle coyield \rangle$.\\
 
 [TODO: This is a wacky piece of explanation, please improve]
-One may wonder why $<cowrap>$ and $<coyield>$ are statements instead of expressions. This is due to expressions having no side effects, this means that they only influence the single variable they are assigned to. Coroutines however, do not only change the returning value they are assigned to, but they also influence their own state/syntaxblock, which influences the future calls of the coroutine. If coroutines would be modeled as expressions, they would not be able to influence their own context, meaning that coroutines need to be statements.
+One may wonder why $\langle cowrap \rangle$ and $\langle coyield \rangle$ are statements instead of expressions. This is due to expressions having no side effects, this means that they only influence the single variable they are assigned to. Coroutines however, do not only change the returning value they are assigned to, but they also influence their own state/syntaxblock, which influences the future calls of the coroutine. If coroutines would be modeled as expressions, they would not be able to influence their own context, meaning that coroutines need to be statements.
 
 # Semantics
 
@@ -51,7 +51,7 @@ G(v) is a set with global variables. It will contain all the coroutinetuples.
 
 \[ref_N = Ref\]
 
-ref_N is the next free referencevalue. These will be used to identify coroutines.
+$ref_N$ is the next free referencevalue. These will be used to identify coroutines.
 
 \[\text{s} =  (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref})\]
 
@@ -173,3 +173,5 @@ Case 3: $\langle B_I, s_I'\rangle$ ends in a final state $s_I''$
 Like the other two cases, $s_O'$ consists of the locals of the original $s_O$ and the globals of $s_I''$. Then, we update the coroutine $c$ to nil(). Lastly, we have nothing to return, so we set $r_O$ to nil().
 
 # Analysis
+
+# Conclusie

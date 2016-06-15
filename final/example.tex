@@ -6,8 +6,8 @@
 }
 
 \lstinputlisting[language={[5.0]Lua}]{code.lua}
-
-\texttt{co = coroutine.wrap(indec)} only creates the coroutine, it does not
+In this example, a coroutine will be demonstrated. This coroutine will remember a pointer and, based on it's input, will increment or decrement this pointer.
+\\ \texttt{co = coroutine.wrap(indec)} only creates the coroutine, it does not
 start it. When \texttt{it0=co(false)} is called, the coroutine starts with
 \texttt{x=false}. The coroutine then enters the while-loop, and because
 \texttt{x=false} the program only executes the line
@@ -24,3 +24,4 @@ while-loop. Because it is resumed with \texttt{true}, \texttt{delta = delta *
 (-1)} will be executed, giving \texttt{delta} the value of \texttt{-1}. After
 this, \texttt{pointer=pointer + delta} will be executed. Lastly, the coroutine
 will yield with \texttt{pointer=1}, giving \texttt{it2} the value of \texttt{1}.
+\\ In the chapters 2 and 3 we will create syntactical and semantical rules, so that we can prove the correctness of this program in chapter 4.
