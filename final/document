@@ -121,10 +121,27 @@ semantics(if_false)
 
 semantics(while)
 
-## Function rules
+Lua does not work with skip() or ;. Instead, Lua uses $\epsilon$ and blocks respectively.
 
+## Function rules
+Note: in these functions the $_O$ index stands outside the function, and the $_I$ index represents symbols for the inside of the function.
+This is visually represented within the semantic rules: all variables underneath the justification line have an $_O$ index, while all variables above it have an $_I$ index.
+
+Firstly, we unpack $f$ from $s_O$, with $s_I$ being the state at it's moment of assignment, $r_I$ being the call variable and $B_I$ being the syntaxblock belonging to the function.
+Next, a state $s_I'$ is initialised with the locals of $s_I$ and the globals of $s_O$ and $r_I$ is initialised to the evaluated value of the given argument $a_O$.
+
+After this, the function can end in an arbitrairy amount of steps in two different ways: 
 semantics(call_ret)
+
+Case 1: A n(return) is encountered
+
+The function ends with a returnargument $a_I$ and a state $s_I''$.
+A returnstate $s_O'$ is created with the locals of $s_O$, the globals of $s_I''$ and $r_O$ is set to $a_I$. 
 semantics(call_nil)
+
+Case 2: $\langle B_I, s_I'\rangle$ ends in a final state $s_I''$
+
+A returnstate $s_O'$ is created, again with the locals of $s_O$ and the globals of $s_I''$. This time however, we have no returnargument, so we initialise $r_O$ with nil().
 
 ## Coroutine rules
 
@@ -132,7 +149,7 @@ semantics(wrap)
 
 The wrap-rule binds a function to a coroutine. The function itself will not be executed yet.\\
 
-The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. This can be seen within the semantic rules: all variables underneath the justification line have index $_O$, while all variables above it have index $_I$.
+The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. Again this can be seen within the semantic rules: all variables underneath the justification line have index $_O$, while all variables above it have index $_I$.
 
 For starters, we unpack our coroutine c: we take his original state $s_I$ from when it was last wrapped/yielded, his call argument $r_I$ and his syntaxblock $B_I$. We then put c to nil() in $s_O$. This will prevent the coroutine from trying to execute itself during its own execution.
 
@@ -141,17 +158,17 @@ After that, a new state is created, $s_I'$, consisting of the locals of $s_I$ an
 Then, a certain amount of steps later, there are three cases of syntax that can be encountered to end the resume and switch back to the outside piece of code:
 semantics(resume_yield)
 
-Case 1: a yield is encountered.
+Case 1: A yield is encountered.
 
 A new state $s_O'$ is formed with the locals of the old $s_O$ and the globals of current state $s_I''$. It also updates the value of the coroutine $c$. It does so by giving it the update state $s_I''$, the new variable that needs to be initialised $r_I'$ and the updated block of syntax $B_I'$ respectively. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
 semantics(resume_ret)
 
-Case 2: a return is encountered.
+Case 2: A return is encountered.
 
 Again, a new state $s_O'$ is formed by taking the locals of the old $s_O$ and the globals of $s_I''$. It also updates the value of the coroutine $c$. However, this time the coroutine has ended, so $c$ gets updated to nil(). This way, the next time $c$ gets called, $c$ can't be unpacked into the tuple ($s_I$, $r_I$, $B_I$) and the resume rules wil not patternmatch, resulting in an error. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
 semantics(resume_nil)
 
-Case 3: $B_I$ ends in a final state $s_I''$
+Case 3: $\langle B_I, s_I'\rangle$ ends in a final state $s_I''$
 
 Like the other two cases, $s_O'$ consists of the locals of the original $s_O$ and the globals of $s_I''$. Then, we update the coroutine $c$ to nil(). Lastly, we have nothing to return, so we set $r_O$ to nil().
 
