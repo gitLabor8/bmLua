@@ -22,7 +22,7 @@ import(example.tex)
 
 syntax()
 
-Most part of this syntax is very similar to the syntax of While, apart of some slight changes in keywords. e.g. "while $\langle expr \rangle$ do $\langle block \rangle$ end" instead of "while b do S" where b is an expression and S is a block. However, three relatively big things are different:
+A large part of this syntax is very similar to the syntax of While, apart of some slight changes in keywords. e.g. "while $\langle expr \rangle$ do $\langle block \rangle$ end" instead of "while b do S" where b is an expression and S is a block. However, three relatively big things are different:
 
 First of all, Lua doesn't have strong typing, while While does. This means that we do not know what the type of an expression is, until we've fully evaluated the expression. In our example, this leads to the b in While being an $\langle expr \rangle$ in our model of Lua.
 
@@ -41,29 +41,26 @@ One may wonder why $\langle cowrap \rangle$ and $\langle coyield \rangle$ are st
 
 ## State
 
-\[L(v) = {v | v = Var}\]
+\[n(Ref) = \{ n(ref)_n | n \in \mathbb{N} \}\]
 
-L(v) is a set with local variables. It will contain all our normal variables, these are nil, bools and numbers.
-
-\[G(v) = {v | v = Var}\]
-
-G(v) is a set with global variables. It will contain all the coroutinetuples.
+The Ref-type, or Reference, is a natural number that will point to coroutinetuples.
 
 \[ref_N = Ref\]
 
-$ref_N$ is the next free referencevalue. These will be used to identify coroutines.
+ref$_N$ is the next free Referencevalue. We keep track if this counter in order to avoid two different Referencevariables pointing at the same coroutinetuple. Throughout the execution of a program, this value will only increment.
+
+L() is a function that depicts variables on their values. Within this model, they will be used to depict variables on nil, bools, numbers and References.
+
+G() is a function that depicts Referencesvalues on their coroutine-tuples.
 
 \[\text{s} =  (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref})\]
 
 The state s is a tuple that contains the locals, globals and the next free referencenumber.
 References are not natural numbers.
 
-\[n(Ref) = \{ n(ref)_n | n \in \mathbb{N} \}\]
-
-Nil is the set consisting of the nil element.
-
 \[n(Nil) = \{ nil() \}\]
 
+Nil is the set consisting of the nil element.
 \[new() = (fn(x, nil()), fn(x, nil()), n(ref)_0)\]
 
 new represents a fresh state with no bindings.
@@ -96,7 +93,7 @@ given state.
 \[def((L, G, n(ref)_N), v, x) = (fn(v', n(ref)_N, v' = v, L(v')),
 fn(r, x, r = n(ref)_N, G(r)), n(ref)_{N+1})\]
 
-Def saves a coroutine in the current state. For this, it creates a reference
+def saves a coroutine in the current state. For this, it creates a reference
 with variablename v and value $n(ref)_N$ to the coroutine in the set of locals.
 It also saves the coroutine x in the set of globals with the reference
 $n(ref)_N$. Lastly, it heightens up the next free referencevalue by one. The
@@ -151,7 +148,7 @@ The wrap-rule binds a function to a coroutine. The function itself will not be e
 
 The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. Again this can be seen within the semantic rules: all variables underneath the justification line have index $_O$, while all variables above it have index $_I$.
 
-For starters, we unpack our coroutine c: we take his original state $s_I$ from when it was last wrapped/yielded, his call argument $r_I$ and his syntaxblock $B_I$. We then put c to nil() in $s_O$. This will prevent the coroutine from trying to execute itself during its own execution.
+For starters, we unpack our coroutine c: we take his original state $s_I$ from when it was last wrapped/yielded, his call argument $r_I$ and his syntaxblock $B_I$. We then put c to nil() in $s_O$ and call the resulting state $s_O'$. This will prevent the coroutine from trying to execute itself during its own execution.
 
 After that, a new state is created, $s_I'$, consisting of the locals of $s_I$ and the globals of $s_O$. The rule then takes the argument $a_O$ and sets the variable $r_I$ in $s_I'$ to it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
 
@@ -160,17 +157,17 @@ semantics(resume_yield)
 
 Case 1: A yield is encountered.
 
-A new state $s_O'$ is formed with the locals of the old $s_O$ and the globals of current state $s_I''$. It also updates the value of the coroutine $c$. It does so by giving it the update state $s_I''$, the new variable that needs to be initialised $r_I'$ and the updated block of syntax $B_I'$ respectively. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
+A new state $s_O''$ is formed with the locals of the old $s_O$ and the globals of current state $s_I''$. It also updates the value of the coroutine $c$. It does so by giving it the update state $s_I''$, the new variable that needs to be initialised $r_I'$ and the updated block of syntax $B_I'$ respectively. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$.
 semantics(resume_ret)
 
 Case 2: A return is encountered.
 
-Again, a new state $s_O'$ is formed by taking the locals of the old $s_O$ and the globals of $s_I''$. It also updates the value of the coroutine $c$. However, this time the coroutine has ended, so $c$ gets updated to nil(). This way, the next time $c$ gets called, $c$ can't be unpacked into the tuple ($s_I$, $r_I$, $B_I$) and the resume rules wil not patternmatch, resulting in an error. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$. After updating the state, the old syntaxblock $B_O$ is run with this updated state $s_O'$.
+Again, a new state $s_O''$ is formed by taking the locals of the old $s_O'$ and the globals of $s_I''$. It also updates the value of the coroutine $c$. However, this time the coroutine has ended, so $c$ gets updated to nil(). This way, the next time $c$ gets called, $c$ can't be unpacked into the tuple ($s_I$, $r_I$, $B_I$) and the resume rules wil not patternmatch, resulting in an error. Lastly, it gives the outside of the coroutine his returnargument $a_I$, to which $r_O$ will be bound in $s_O'$.
 semantics(resume_nil)
 
 Case 3: $\langle B_I, s_I'\rangle$ ends in a final state $s_I''$
 
-Like the other two cases, $s_O'$ consists of the locals of the original $s_O$ and the globals of $s_I''$. Then, we update the coroutine $c$ to nil(). Lastly, we have nothing to return, so we set $r_O$ to nil().
+Like the other two cases, $s_O''$ consists of the locals of the original $s_O'$ and the globals of $s_I''$. Then, we update the coroutine $c$ to nil(). Lastly, we have nothing to return, so we set $r_O$ to nil().
 
 # Analysis
 
