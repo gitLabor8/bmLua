@@ -132,11 +132,13 @@ semantics(wrap)
 
 The wrap-rule binds a function to a coroutine. The function itself will not be executed yet.\\
 
-The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. 
+The resume rule continues a coroutine. The index $_O$ refers to the outside of the coroutine, while the index $_I$ refers to the inside of the coroutine. This can be seen within the semantic rules: all variables underneath the justification line have index $_O$, while all variables above it have index $_I$.
 
-A new state is created, $s_I'$, consisting of the locals of $s_I$, being the local variables that the coroutine had the last time it got wrapped/yielded, and the globals of $s_O$. The rule then takes the argument $a_O$ and sets the variable $r_I$ in $s_I'$ to it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
+For starters, we unpack our coroutine c: we take his original state $s_I$ from when it was last wrapped/yielded, his call argument $r_I$ and his syntaxblock $B_I$. We then put c to nil() in $s_O$. This will prevent the coroutine from trying to execute itself during its own execution.
 
-Then, after a certain amount of steps later, there are three cases of syntax that can be encountered to end the resume and switch back to the outside piece of code:
+After that, a new state is created, $s_I'$, consisting of the locals of $s_I$ and the globals of $s_O$. The rule then takes the argument $a_O$ and sets the variable $r_I$ in $s_I'$ to it. Next, the syntaxblock $B_I$ of the coroutine is executed with $s_I'$ as it's state.
+
+Then, a certain amount of steps later, there are three cases of syntax that can be encountered to end the resume and switch back to the outside piece of code:
 semantics(resume_yield)
 
 Case 1: a yield is encountered.
