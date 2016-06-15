@@ -262,6 +262,7 @@ funcs.update({
     'get': envf('get', 2),
     'let': envf('let', 3),
     'set': envf('set', 3),
+    'coget': envf('coget', 2),
     'merge': envf('merge', 2),
     'def': envf('def', 3),
     'new': envf('new', 0),

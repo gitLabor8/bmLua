@@ -68,9 +68,13 @@ Nil is the set consisting of the nil element.
 
 new represents a fresh state with no bindings.
 
-\[get((L, G, n(ref)_N), v) = cases(G(L(v)), L(v) \in n(Ref), L(v))\]
+\[get((L, G, n(ref)_N), v) = L(v)\]
 
 The get-function takes a state and a variablename and looks it up in the collection of locals.
+
+\[coget((L, G, n(ref)_N), v) = G(L(v))\] % aanname: L(v) is een Ref
+
+Gets the current state of a certain coroutine. For this, L(v) must be a Ref. Note that the global memory of the coroutine is inaccessable to other functions once this tuple is assigned to a variable.
 
 \[merge((L_1, G_1, n(ref)_{N_1}), (L_2, G_2, n(ref)_{N_2})) =
 (L_1, G_2, n(ref)_{n(max)(N_1, N_2)})\]
