@@ -93,7 +93,7 @@ class ButNot(Parser):
 
     def parse(self, s, syntax):
         x, s2 = syntax.parse(s, self.parser)
-        if s[:-len(s2)] in self.nots:
+        if s[:-len(s2)].strip() in self.nots:
             raise ParseException(s)
         return x, s2
 
@@ -120,14 +120,14 @@ class Syntax:
     def parse(self, s, start=None, handlermap=None):
         if start is None:
             start = self.start
-        if handlermap is None:
-            handlermap = self.handlermap
+        if handlermap is not None:
+            self.handlermap = handlermap
         if isinstance(start, Parser):
             return start.parse(s, self)
         else:
             result, s = self.parsermap[start].parse(s, self)
-            if start in handlermap:
-                result = handlermap[start](result)
+            if start in self.handlermap:
+                result = self.handlermap[start](result)
             else:
                 result = self.defaulthandler(result)
             return result, s

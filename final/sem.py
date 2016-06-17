@@ -1,92 +1,17 @@
 from tex import *
 
-nil = Code('nil')
-true = Code('true')
-false = Code('false')
-
-class Mapping(MathTex):
-    def __init__(self, mappings=dict(), parent=None):
-        self.mappings = mappings
-        self.parent = parent
-
-    def set(self, var, val):
-        d = self.mappings.copy()
-        d[var] = val
-        return Mapping(d, self.parent)
-
-    def get(self, var):
-        if var in self.mappings:
-            return self.mappings[var]
-        else:
-            return nil
-
-    def gentex(self):
-        if len(self.mappings) == 0 and self.parent is not None:
-            return tex(self.parent)
-        s = r'\langle '
-        mappings = (tex(k) + r'\mapsto ' + tex(v)
-                for k, v in self.mappings.items())
-        s += ', '.join(mappings)
-        if self.parent:
-            s += ', ' + tex(self.parent)
-        s += r'\rangle '
-        return s
-
-class Ref(MathTex):
-    def __init__(self, n):
-        self.n = n
-        self.x = str(n)
-
-    def gentex(self):
-        return r'\textrm{ref}_{' + self.x + r'}'
-
-ref0 = Ref(0)
-nilmapping = Mapping()
-
-class State(MathTex):
-    def __init__(self, locs=nilmapping, globs=nilmapping, nxtref=ref0):
-        self.locs = locs
-        self.globs = globs
-        self.nxtref = nxtref
-
-    def gentex(self):
-        return Tex.tuple(self.locs, self.globs, self.nxtref)
-
-    def let(self, var, val):
-        return State(self.locs.set(var, val), self.globs, self.nxtref)
-
-    def set(self, var, val):
-        return State(self.locs, self.globs.set(self.locs.get(var), val),
-                self.nxtref)
-
-    def get(self, var):
-        v = self.locs.get(var)
-        if isinstance(v, Ref):
-            return self.globs.get(v)
-        else:
-            return v
-
-    def merge(self, other):
-        return State(self.locs, other.globs, Ref(max(self.nxtref.n,
-            other.nxtref.n)))
-
-    def def_(self, var, val):
-        return State(self.locs.set(var, self.nxtref),
-                self.globs.set(self.nxtref, val), Ref(self.nxtref.n + 1))
-
-    def evalexpr(self, e):
-        pass
-
-class SS(MathTex):
+class SS(Mex):
     def __init__(self, stmt, state):
         self.stmt = stmt
         self.state = state
 
     def gentex(self):
-        return r'\langle ' + self.tex(self.stmt) + ', ' + \
-                self.tex(self.state) + r'\rangle'
+        stmt = mex(self.stmt)
+        if stmt.strip() == '':
+            stmt = r'\epsilon '
+        return r'\langle ' + stmt + ', ' + mex(self.state) + r'\rangle'
 
-class Sem(MathTex):
+class Sem(Mex):
     def tops_left(self, bottom_left):
         return []
 

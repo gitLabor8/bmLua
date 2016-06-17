@@ -1,0 +1,24 @@
+rule = name ':' body
+
+body = justifies | resin
+
+justifies = resin '---' resin
+
+resin = ssirss | ssiss | ssirs | ssis
+
+ssirss = ss '=>*' ss
+ssiss = ss '=>' ss
+ssirs = ss '=>*' state
+ssis = ss '=>' state
+
+ss = '<' + block + ',' + state + '>'
+
+state = vstate | cstate
+
+vstate = 's' varext
+
+varext = '_' idchars primes | primes
+
+idchars = idchar idchars | idchar
+
+primes = "'" primes | ''

@@ -2,14 +2,17 @@
 # Copyrights to Niek
 default: test.pdf rm
 
-test.tex: tex.py syntax semantics document
-	python3 tex.py
+test.tex: test.py code.lua tex.py lua_sem.py sem.py lua_syn.py lua_prs.py prs.py
+	python3 test.py
 
 test.pdf: test.tex
 	pdflatex --shell-escape test.tex
 	pdflatex --shell-escape test.tex
 
-lua.pdf: lua.tex
+lua.tex: tex.py syntax semantics document
+	python3 tex.py
+
+lua.pdf: test.tex
 	pdflatex --shell-escape lua.tex
 	pdflatex --shell-escape lua.tex
 
