@@ -38,6 +38,13 @@ One may wonder why $\langle cowrap \rangle$ and $\langle coyield \rangle$ are st
 ## Values
 
 % We define the usual boolean operations on false() and true()
+\[eval(code(0),s) = 0\]
+\[\vdots\]
+\[eval(code(9),s) = 9\]
+\[eval(nil(),s) = nil() \]
+We define the boolean logic on true() and false().\\
+
+% Insert juicy
 
 ## State
 
@@ -101,8 +108,20 @@ coroutine is now saved within the set of globals with a unique referencevalue
 and can be accessed by looking up this referencevalue in the set of locals.
 
 ## Expressions
+\[eval(add(n_1, n_2), s) = eval(n_1, s) + eval(n_2, s)\]
+\[eval(sub(n_1, n_2), s) = eval(n_1, s) - eval(n_2, s)\]
+\[eval(mul(n_1, n_2), s) = eval(n_1, s) * eval(n_2, s)\]
+
+\[eval(and(b_1, b_2), s) = eval(b_1, s) \wedge eval(b_2, s)\]
+\[eval(or(b_1, b_2), s) = eval(b_1, s) \vee eval(b_2, s)\]
+
+\[eval(neg(n), s) = \-- eval(b, s)\]
+\[eval(not(b), s) = \neg eval(n,s)\]
+\[eval(parens(e),s) = eval(e,s) \]
 
 \[eval(lambda(a, B), s) = (s, a, B)\]
+
+% insert juicy
 
 ## Simple rules
 

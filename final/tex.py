@@ -253,6 +253,7 @@ funcs.update({
     'syntax': syntax,
     'fn': mathfn,
     'n': text,
+    'code' : code,
     'cases': casesf,
     'when': lambda a, b: a + '\quad [' + b + ']',
     'ssirss': lambda a, b, c, d: ssiss(a, b, c, d, True),
