@@ -41,16 +41,15 @@ One may wonder why $\langle cowrap \rangle$ and $\langle coyield \rangle$ are st
 \[eval(code(0),s) = 0\]
 \[\vdots\]
 \[eval(code(9),s) = 9\]
-\[eval(nil(),s) = nil() \]
-We define the boolean logic on true() and false().\\
+\[eval(nil(),s) = nil()\]
 
-% Insert juicy
+The syntactical numbers will be converted to the mathematical equivalent and we define the boolean logic on true() and false(). nil() means that a variable is uninitialised.
 
 ## State
 
 \[n(Ref) = \{ n(ref)_n | n \in \mathbb{N} \}\]
 
-The Ref-type, or Reference, is a natural number that will point to coroutinetuples.
+The Ref-type, or Reference, is a natural number that will point to coroutinetuples. By calling it a Ref-type, we make sure that they aren't confused with natural numbers.
 
 \[ref_N = Ref\]
 
@@ -63,7 +62,6 @@ G() is a function that depicts Referencesvalues on their coroutine-tuples.
 \[\text{s} =  (\langle \text{var} \rangle \to \text{Val} \cup \text{Ref, Ref} \to \text{Val, Ref})\]
 
 The state s is a tuple that contains the locals, globals and the next free referencenumber.
-References are not natural numbers.
 
 \[n(Nil) = \{ nil() \}\]
 
@@ -108,6 +106,8 @@ coroutine is now saved within the set of globals with a unique referencevalue
 and can be accessed by looking up this referencevalue in the set of locals.
 
 ## Expressions
+\[eval(code(v), s) = get(s,v)\]
+
 \[eval(add(n_1, n_2), s) = eval(n_1, s) + eval(n_2, s)\]
 \[eval(sub(n_1, n_2), s) = eval(n_1, s) - eval(n_2, s)\]
 \[eval(mul(n_1, n_2), s) = eval(n_1, s) * eval(n_2, s)\]
@@ -117,11 +117,15 @@ and can be accessed by looking up this referencevalue in the set of locals.
 
 \[eval(neg(n), s) = \-- eval(b, s)\]
 \[eval(not(b), s) = \neg eval(n,s)\]
-\[eval(parens(e),s) = eval(e,s) \]
+\[eval(parens(e),s) = eval(e,s)\]
 
 \[eval(lambda(a, B), s) = (s, a, B)\]
 
-% insert juicy
+Variables are values stored in the state.
+
++, - and * are the mathematical operations for addition, subtraction and multiplication respectively. $\wedge$ and $\vee$ are the logical operators for \"and\" and \"or\" respectively. $\--$ and $\neg$ are the mathematical minus and logical negation. Unneccesairy parenthesis will be negated.
+
+Lastely, a function is saved as a tuple of the state in which it is initialised, the argument it wants to be called with and a syntactical block.
 
 ## Simple rules
 
